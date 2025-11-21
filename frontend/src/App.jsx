@@ -46,7 +46,10 @@ function App() {
         }
 
         return (
-                <div className='relative min-h-screen bg-gradient-to-b from-bladi-green-soft via-payzone-navy to-[#0a241b] text-payzone-white'>
+                <div className='relative min-h-screen overflow-hidden text-payzone-white'>
+                        <div className='pointer-events-none absolute inset-0 -z-20 bg-gradient-to-b from-[#0b3f2f] via-[#0f5f45] to-[#0b3f2f]' />
+                        <div className='pointer-events-none absolute inset-0 -z-10 bilady-flag-overlay opacity-70' />
+                        <div className='pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#0b3f2f]/60 via-[#0f5f45]/55 to-[#0b3f2f]/65' />
                         <div className='relative z-50 pt-24'>
                                 <Navbar />
                                 <Routes>

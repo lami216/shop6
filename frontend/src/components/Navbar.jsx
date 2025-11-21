@@ -20,8 +20,8 @@ const Navbar = () => {
                                                         ب
                                                 </div>
                                                 <div className='flex flex-col text-right leading-tight'>
-                                                        <span className='text-lg font-bold tracking-wide'>Biladi Draws</span>
-                                                        <span className='text-sm font-semibold text-payzone-gold'>سحوبات بلادي</span>
+                                                        <span className='text-lg font-bold tracking-wide'>Bilady</span>
+                                                        <span className='text-sm font-semibold text-payzone-gold'>بلادي</span>
                                                 </div>
                                         </Link>
 

@@ -1,13 +1,16 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ShoppingBag, CreditCard, Gift, Trophy, CalendarClock } from "lucide-react";
 import { useProductStore } from "../stores/useProductStore";
 import { useCartStore } from "../stores/useCartStore";
 import { getProductPricing } from "../lib/getProductPricing";
 import { formatMRU } from "../lib/formatMRU";
+import useDrawStore from "../stores/useDrawStore";
 
 const HomePage = () => {
         const { fetchAllProducts, products, loading: productsLoading } = useProductStore();
         const { addToCart } = useCartStore();
+        const { fetchNextDraw, nextDrawAt, loading: drawLoading } = useDrawStore();
+        const [timeLeft, setTimeLeft] = useState(null);
 
         const pastWinners = useMemo(
                 () => [
@@ -19,9 +22,54 @@ const HomePage = () => {
                 []
         );
 
+        const formattedNextDraw = useMemo(() => {
+                if (!nextDrawAt) return null;
+                const dateObj = new Date(nextDrawAt);
+                if (Number.isNaN(dateObj.getTime())) return null;
+                return dateObj.toLocaleString("ar-MR", {
+                        dateStyle: "full",
+                        timeStyle: "short",
+                });
+        }, [nextDrawAt]);
+
         useEffect(() => {
                 fetchAllProducts();
-        }, [fetchAllProducts]);
+                fetchNextDraw();
+        }, [fetchAllProducts, fetchNextDraw]);
+
+        useEffect(() => {
+                if (!nextDrawAt) {
+                        setTimeLeft(null);
+                        return;
+                }
+
+                const targetDate = new Date(nextDrawAt);
+                if (Number.isNaN(targetDate.getTime())) {
+                        setTimeLeft(null);
+                        return;
+                }
+
+                const updateCountdown = () => {
+                        const diff = targetDate.getTime() - Date.now();
+
+                        if (diff <= 0) {
+                                setTimeLeft({ expired: true, days: 0, hours: 0, minutes: 0, seconds: 0 });
+                                return;
+                        }
+
+                        const totalSeconds = Math.floor(diff / 1000);
+                        const days = Math.floor(totalSeconds / 86400);
+                        const hours = Math.floor((totalSeconds % 86400) / 3600);
+                        const minutes = Math.floor((totalSeconds % 3600) / 60);
+                        const seconds = totalSeconds % 60;
+
+                        setTimeLeft({ expired: false, days, hours, minutes, seconds });
+                };
+
+                updateCountdown();
+                const interval = setInterval(updateCountdown, 1000);
+                return () => clearInterval(interval);
+        }, [nextDrawAt]);
 
         const handleAddToCart = (product) => {
                 const { price, discountedPrice, isDiscounted, discountPercentage } = getProductPricing(product);
@@ -38,6 +86,10 @@ const HomePage = () => {
                 return "";
         };
 
+        const countdownValues = timeLeft && !timeLeft.expired
+                ? timeLeft
+                : { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
         return (
                 <div className='relative min-h-screen overflow-hidden text-payzone-white'>
                         <div className='pointer-events-none absolute inset-0 opacity-40'>
@@ -45,57 +97,61 @@ const HomePage = () => {
                                 <div className='absolute bottom-0 right-0 h-64 w-64 rounded-full bg-payzone-indigo/60 blur-3xl'></div>
                         </div>
 
-                        <section id='hero' className='relative overflow-hidden bg-gradient-to-l from-bladi-green via-payzone-navy to-bladi-green-soft px-4 pb-16 pt-10 sm:px-6 lg:px-8 lg:pt-14'>
+                        <section
+                                id='hero'
+                                className='relative overflow-hidden bg-gradient-to-l from-[#0f5f45]/85 via-[#134e3b]/70 to-[#0b3f2f]/90 px-4 pb-16 pt-10 shadow-inner shadow-black/30 sm:px-6 lg:px-8 lg:pt-14'
+                        >
+                                <div className='absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_20%_20%,rgba(242,199,69,0.28),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(216,30,47,0.22),transparent_32%)]' />
                                 <div className='relative mx-auto max-w-6xl'>
                                         <div className='grid items-center gap-10 lg:grid-cols-2'>
                                                 <div className='space-y-6'>
                                                         <div className='inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-gold shadow-inner shadow-black/20'>
-                                                                سحوبات بلادي • هوية موريتانية بلمسة عصرية
+                                                                بلادي • هدايا وطنية مع دخول مجاني للسحب
                                                         </div>
                                                         <h1 className='text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl'>
-                                                                شارك في سحوبات بلادي واربح منتجات مميزة
+                                                                شارك مع بلادي واحصل على بطاقة سحب مجانية عند شراء بوكس بلادي
                                                         </h1>
                                                         <p className='max-w-2xl text-lg text-white/85'>
-                                                                شراء أي منتج أو الحصول على بوكس بلادي يمنحك فرصة فورية للدخول في السحب القادم والفوز بجوائز مستوحاة من روح موريتانيا.
+                                                                بوكس بلادي مليء بالهدايا والمنتجات الوطنية، ومع كل بوكس تحصل على بطاقة دخول السحب بدون أي تكلفة إضافية لتكون ضمن الفائزين بالقائمة التالية من الجوائز.
                                                         </p>
                                                         <div className='flex flex-wrap items-center gap-4'>
                                                                 <a
-                                                                        href='#prizes'
+                                                                        href='#box'
                                                                         className='rounded-full bg-payzone-gold px-6 py-3 text-lg font-bold text-payzone-navy shadow-lg shadow-payzone-gold/40 transition hover:scale-105 hover:bg-bladi-yellow'
                                                                 >
-                                                                        اشترك الآن
+                                                                        اشتر بوكس بلادي الآن
                                                                 </a>
                                                                 <a
-                                                                        href='#box'
+                                                                        href='#prizes'
                                                                         className='rounded-full border border-white/30 px-6 py-3 text-lg font-semibold text-payzone-white transition hover:border-payzone-gold hover:text-payzone-gold'
                                                                 >
-                                                                        اشترِ منتجًا للمشاركة
+                                                                        تصفح جوائز السحب
                                                                 </a>
                                                         </div>
                                                         <div className='flex flex-wrap items-center gap-4 text-sm text-white/80'>
                                                                 <span className='flex items-center gap-2 rounded-full bg-white/10 px-3 py-2'>
                                                                         <Gift size={18} />
-                                                                        كل طلب = فرصة في السحب
+                                                                        بطاقة السحب تأتي مع البوكس مجاناً
                                                                 </span>
                                                                 <span className='flex items-center gap-2 rounded-full bg-white/10 px-3 py-2'>
                                                                         <Trophy size={18} />
-                                                                        هدايا وطنية حصرية
+                                                                        هدايا موريتانية في كل طلب
                                                                 </span>
                                                         </div>
                                                 </div>
 
                                                 <div className='relative'>
-                                                        <div className='absolute inset-0 -z-10 bg-gradient-to-br from-payzone-gold/10 via-transparent to-payzone-indigo/20 blur-3xl'></div>
-                                                        <div className='relative mx-auto flex h-[380px] w-[380px] items-center justify-center rounded-full bg-gradient-to-br from-bladi-green via-payzone-navy to-bladi-green-soft p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.6)] sm:h-[420px] sm:w-[420px]'>
-                                                                <div className='absolute inset-6 rounded-[40px] bg-gradient-to-br from-payzone-gold via-bladi-yellow to-payzone-indigo opacity-80 blur-2xl'></div>
-                                                                <div className='relative h-full w-full rounded-[32px] bg-gradient-to-br from-bladi-cream via-payzone-white to-bladi-yellow/70 p-6 shadow-2xl shadow-black/40'>
-                                                                        <div className='absolute -left-4 top-8 h-6 w-1/2 rounded-r-full bg-payzone-gold/70 blur-sm' />
-                                                                        <div className='absolute -right-4 bottom-8 h-6 w-1/2 rounded-l-full bg-payzone-indigo/60 blur-sm' />
-                                                                        <div className='flex h-full w-full flex-col items-center justify-center rounded-[24px] bg-gradient-to-br from-bladi-green-soft via-bladi-green to-payzone-navy text-center shadow-inner shadow-black/30'>
+                                                        <div className='absolute inset-0 -z-10 bg-gradient-to-br from-payzone-gold/15 via-transparent to-payzone-indigo/20 blur-3xl'></div>
+                                                        <div className='relative mx-auto flex h-[380px] w-[380px] items-center justify-center rounded-full bg-gradient-to-br from-[#0f5f45] via-[#0c3f30] to-[#0d4a35] p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.6)] sm:h-[420px] sm:w-[420px]'>
+                                                                <div className='absolute inset-6 rounded-[40px] bg-gradient-to-br from-payzone-gold via-bladi-yellow to-payzone-indigo opacity-70 blur-2xl'></div>
+                                                                <div className='relative h-full w-full rounded-[32px] bg-gradient-to-br from-bladi-cream via-payzone-white to-bladi-yellow/60 p-6 shadow-2xl shadow-black/40'>
+                                                                        <div className='absolute -left-4 top-8 h-6 w-1/2 rounded-r-full bg-payzone-gold/60 blur-sm' />
+                                                                        <div className='absolute -right-4 bottom-8 h-6 w-1/2 rounded-l-full bg-payzone-indigo/50 blur-sm' />
+                                                                        <div className='flex h-full w-full flex-col items-center justify-center rounded-[24px] bg-gradient-to-br from-[#0f5f45]/85 via-[#0c382b] to-[#0f5f45]/90 text-center shadow-inner shadow-black/30'>
                                                                                 <span className='rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-gold'>بوكس بلادي</span>
                                                                                 <h3 className='mt-4 text-2xl font-extrabold text-payzone-white'>هديتك الذهبية</h3>
                                                                                 <p className='mt-2 max-w-xs text-sm text-white/80'>
-                                                                                        صندوق بتصميم ثلاثي الأبعاد يحوي منتجات موريتانية مختارة مع فرصة دخول السحب الكبير.
+                                                                                        هدية وطنية متكاملة تحمل منتجات بلادي وتمنحك بطاقة سحب مجانية ضمن الجوائز المعروضة أدناه.
                                                                                 </p>
                                                                         </div>
                                                                 </div>
@@ -107,10 +163,10 @@ const HomePage = () => {
 
                         <section id='prizes' className='relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8'>
                                 <div className='mb-10 flex flex-col gap-4 text-center'>
-                                        <span className='mx-auto w-fit rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-gold shadow-inner shadow-black/20'>جوائز السحب</span>
-                                        <h2 className='text-3xl font-bold sm:text-4xl'>المنتجات التي تنتظرك</h2>
-                                        <p className='text-white/75'>
-                                                كل منتج تقتنيه يمنحك فرصة للفوز في السحب القادم. اختر ما يناسبك واستعد لمفاجآت بلادي.
+                                        <span className='mx-auto w-fit rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-payzone-gold shadow-inner shadow-black/20'>جوائز السحب</span>
+                                        <h2 className='text-3xl font-bold sm:text-4xl'>الجوائز التي يمكن الفوز بها مع بطاقة بلادي</h2>
+                                        <p className='text-white/80'>
+                                                البوكس الذي تشتريه هو هدية وطنية بحد ذاته، وكل بطاقة سحب مجانية مرافقة له تخولك لربح إحدى الجوائز المعروضة هنا دون أي خطوات إضافية.
                                         </p>
                                 </div>
 
@@ -127,9 +183,9 @@ const HomePage = () => {
                                                 return (
                                                         <div
                                                                 key={product._id}
-                                                                className='group relative flex flex-col overflow-hidden rounded-2xl bg-white/5 shadow-xl shadow-black/25 ring-1 ring-white/10 transition hover:-translate-y-1 hover:ring-payzone-gold'
+                                                                className='group relative flex flex-col overflow-hidden rounded-2xl bg-white/80 text-payzone-navy shadow-xl shadow-black/15 ring-1 ring-bladi-green/15 transition hover:-translate-y-1 hover:shadow-2xl hover:ring-payzone-gold/60'
                                                         >
-                                                                <div className='relative h-56 w-full overflow-hidden bg-gradient-to-br from-bladi-green to-payzone-navy'>
+                                                                <div className='relative h-56 w-full overflow-hidden bg-gradient-to-br from-[#0f5f45]/45 via-[#0b3f2f]/55 to-[#0f5f45]/45'>
                                                                         {isDiscounted && (
                                                                                 <span className='absolute right-3 top-3 z-10 rounded-full bg-payzone-indigo px-3 py-1 text-xs font-bold text-payzone-white shadow-lg'>
                                                                                         -{discountPercentage}%
@@ -139,20 +195,20 @@ const HomePage = () => {
                                                                                 <img
                                                                                         src={coverImage}
                                                                                         alt={product.name}
-                                                                                        className='h-full w-full object-cover transition duration-500 group-hover:scale-110'
+                                                                                        className='h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-110'
                                                                                 />
                                                                         ) : (
-                                                                                <div className='flex h-full w-full items-center justify-center text-sm text-white/70'>صورة الجائزة</div>
+                                                                                <div className='flex h-full w-full items-center justify-center text-sm text-white'>صورة الجائزة</div>
                                                                         )}
-                                                                        <div className='absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent' />
+                                                                        <div className='absolute inset-0 bg-gradient-to-t from-[#0f5f45]/40 via-white/10 to-transparent' />
                                                                 </div>
                                                                 <div className='flex flex-1 flex-col gap-3 p-5'>
-                                                                        <h3 className='text-xl font-bold text-payzone-white'>{product.name}</h3>
-                                                                        <p className='text-sm text-white/70 line-clamp-2'>{product.description}</p>
+                                                                        <h3 className='text-xl font-bold text-payzone-navy'>{product.name}</h3>
+                                                                        <p className='text-sm text-payzone-navy/80 line-clamp-2'>{product.description}</p>
                                                                         <div className='flex flex-wrap items-baseline gap-2 text-lg font-bold text-payzone-gold'>
                                                                                 {isDiscounted ? (
                                                                                         <>
-                                                                                                <span className='text-sm text-white/60 line-through'>{formatMRU(price)}</span>
+                                                                                                <span className='text-sm text-payzone-navy/60 line-through'>{formatMRU(price)}</span>
                                                                                                 <span>{formatMRU(discountedPrice)}</span>
                                                                                         </>
                                                                                 ) : (
@@ -162,7 +218,7 @@ const HomePage = () => {
                                                                         <div className='mt-auto flex items-center justify-between gap-3'>
                                                                                 <a
                                                                                         href={`/products/${product._id}`}
-                                                                                        className='rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-white transition hover:bg-white/20'
+                                                                                        className='rounded-full border border-bladi-green/30 bg-white/60 px-4 py-2 text-sm font-semibold text-payzone-navy transition hover:border-payzone-gold hover:bg-white'
                                                                                 >
                                                                                         تفاصيل الجائزة
                                                                                 </a>
@@ -181,10 +237,10 @@ const HomePage = () => {
                                 </div>
                         </section>
 
-                        <section id='box' className='relative overflow-hidden bg-gradient-to-l from-payzone-indigo/10 via-payzone-navy/30 to-bladi-green/40 py-16'>
-                                <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(242,199,69,0.25),transparent_35%),radial-gradient(circle_at_80%_30%,rgba(216,30,47,0.18),transparent_35%)]'></div>
+                        <section id='box' className='relative overflow-hidden bg-gradient-to-l from-payzone-indigo/8 via-payzone-navy/18 to-bladi-green/30 py-16'>
+                                <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(242,199,69,0.2),transparent_35%),radial-gradient(circle_at_80%_30%,rgba(216,30,47,0.14),transparent_35%)]'></div>
                                 <div className='relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:px-8'>
-                                        <div className='relative mx-auto flex h-72 w-72 items-center justify-center rounded-[32px] bg-gradient-to-br from-payzone-gold via-bladi-yellow to-payzone-indigo p-6 shadow-2xl shadow-black/30 lg:h-80 lg:w-80'>
+                                        <div className='relative mx-auto flex h-72 w-72 items-center justify-center rounded-[32px] bg-gradient-to-br from-payzone-gold via-bladi-yellow to-payzone-indigo p-6 shadow-2xl shadow-black/25 lg:h-80 lg:w-80'>
                                                 <div className='absolute -inset-4 rounded-[36px] border border-white/15'></div>
                                                 <div className='relative h-full w-full rounded-[24px] bg-bladi-cream text-payzone-navy shadow-inner shadow-black/20'>
                                                         <div className='absolute left-4 right-4 top-6 h-10 rounded-2xl bg-gradient-to-r from-bladi-green to-payzone-navy shadow-lg shadow-black/20'></div>
@@ -197,15 +253,18 @@ const HomePage = () => {
 
                                         <div className='flex-1 space-y-4 text-center lg:text-right'>
                                                 <h3 className='text-3xl font-bold text-payzone-white'>ما هو بوكس بلادي؟</h3>
-                                                <p className='text-white/80'>
-                                                        صندوق فاخر يضم مختارات من منتجات وهدايا موريتانية الصنع مع إدخال مباشر في السحب القادم. تصميمه مستوحى من ألوان العلم ليصل إليك كهدية تحمل روح الوطن.
+                                                <p className='text-white/85'>
+                                                        هدية متكاملة تحمل منتجات وهدايا موريتانية مختارة بعناية، وتأتي معها بطاقة سحب مجانية فور الشراء. الجوائز المعروضة في القسم التالي هي ما يمكنك الفوز به مع البطاقة المرافقة للبوكس.
                                                 </p>
                                                 <div className='grid gap-3 sm:grid-cols-2'>
-                                                        <div className='rounded-2xl bg-white/10 p-4 text-sm text-white/85 shadow-inner shadow-black/20'>
-                                                                منتجات وطنية مختارة بعناية.
+                                                        <div className='rounded-2xl bg-white/65 p-4 text-sm text-payzone-navy shadow-inner shadow-black/10 ring-1 ring-bladi-green/15'>
+                                                                البوكس نفسه هدية راقية تمثل ألوان العلم بروح هادئة.
                                                         </div>
-                                                        <div className='rounded-2xl bg-white/10 p-4 text-sm text-white/85 shadow-inner shadow-black/20'>
-                                                                دخول تلقائي في السحب دون متاعب إضافية.
+                                                        <div className='rounded-2xl bg-white/65 p-4 text-sm text-payzone-navy shadow-inner shadow-black/10 ring-1 ring-bladi-green/15'>
+                                                                بطاقة السحب المجانية ترافق كل بوكس دون أي كلفة إضافية.
+                                                        </div>
+                                                        <div className='rounded-2xl bg-white/65 p-4 text-sm text-payzone-navy shadow-inner shadow-black/10 ring-1 ring-payzone-gold/25 sm:col-span-2'>
+                                                                الجوائز في قسم "جوائز السحب" هي ما يمكن أن تربحه بهذه البطاقة.
                                                         </div>
                                                 </div>
                                         </div>
@@ -217,7 +276,7 @@ const HomePage = () => {
                                         <span className='rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-gold shadow-inner shadow-black/20'>كيف تشارك في السحب؟</span>
                                         <h3 className='mt-4 text-3xl font-bold'>خطوات بسيطة لتكون ضمن الفائزين</h3>
                                         <p className='mt-2 text-white/75'>
-                                                ثلاث أو أربع خطوات سريعة تقودك إلى المشاركة في سحوبات بلادي دون أي تعقيد.
+                                                ثلاث أو أربع خطوات سريعة تقودك إلى المشاركة مع بلادي دون أي تعقيد.
                                         </p>
                                 </div>
                                 <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
@@ -229,7 +288,7 @@ const HomePage = () => {
                                         ].map((step, index) => (
                                                 <div
                                                         key={step.title}
-                                                        className='flex flex-col gap-3 rounded-2xl bg-white/5 p-5 text-center shadow-lg shadow-black/20 ring-1 ring-white/10'
+                                                        className='flex flex-col gap-3 rounded-2xl bg-white/75 p-5 text-center text-payzone-navy shadow-lg shadow-black/15 ring-1 ring-bladi-green/15'
                                                 >
                                                         <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-payzone-gold to-payzone-indigo text-payzone-navy shadow-lg shadow-black/30'>
                                                                 {step.icon}
@@ -237,31 +296,52 @@ const HomePage = () => {
                                                         <h4 className='text-lg font-bold'>
                                                                 <span className='text-payzone-gold'>0{index + 1}.</span> {step.title}
                                                         </h4>
-                                                        <p className='text-sm text-white/75'>{step.desc}</p>
+                                                        <p className='text-sm text-payzone-navy/75'>{step.desc}</p>
                                                 </div>
                                         ))}
                                 </div>
                         </section>
 
                         <section className='mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8'>
-                                <div className='flex flex-col items-center gap-6 rounded-3xl bg-gradient-to-r from-bladi-green-soft via-payzone-navy to-payzone-indigo/60 p-8 text-center shadow-2xl shadow-black/30 lg:flex-row lg:text-right'>
-                                        <div className='flex-1 space-y-3'>
-                                                <span className='inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-gold shadow-inner shadow-black/20'>
-                                                        <CalendarClock size={18} /> موعد السحب القادم
-                                                </span>
-                                                <h3 className='text-3xl font-bold'>15 أكتوبر 2024 — الساعة 19:00 بتوقيت نواكشوط</h3>
-                                                <p className='text-white/80'>
-                                                        استعد لمشاهدة السحب مباشرة، وتأكد من متابعة بريدك ورسائلك لمعرفة إذا كنت أحد الفائزين.
-                                                </p>
+                                <div className='relative overflow-hidden rounded-3xl bg-white/85 text-payzone-navy shadow-2xl shadow-black/20 ring-1 ring-bladi-green/15'>
+                                        <div className='absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_15%_30%,rgba(242,199,69,0.2),transparent_35%),radial-gradient(circle_at_85%_20%,rgba(216,30,47,0.12),transparent_35%)]' />
+                                        <div className='relative grid gap-8 p-8 lg:grid-cols-[1.2fr_1fr] lg:items-center'>
+                                                <div className='space-y-3'>
+                                                        <span className='inline-flex items-center gap-2 rounded-full bg-payzone-gold/15 px-4 py-2 text-sm font-semibold text-payzone-navy'>
+                                                                <CalendarClock size={18} /> موعد السحب القادم
+                                                        </span>
+                                                        <h3 className='text-3xl font-bold text-payzone-navy'>عد تنازلي حتى السحب القادم</h3>
+                                                        <p className='text-payzone-navy/80'>
+                                                                العد التنازلي يعتمد على التاريخ والوقت المحددين من لوحة التحكم. عند شراء بوكس بلادي تحصل على بطاقة سحب مجانية صالحة لهذا الموعد.
+                                                        </p>
+                                                        <div className='rounded-2xl border border-bladi-green/20 bg-white/70 px-4 py-3 text-sm font-semibold text-payzone-navy'>
+                                                                {drawLoading ? "يتم تحميل موعد السحب..." : formattedNextDraw || "سيتم الإعلان عن موعد السحب القادم قريباً"}
+                                                        </div>
+                                                </div>
+                                                <div className='grid grid-cols-2 gap-3 text-center sm:grid-cols-4'>
+                                                        {[
+                                                                { label: "الأيام", value: countdownValues.days },
+                                                                { label: "الساعات", value: countdownValues.hours },
+                                                                { label: "الدقائق", value: countdownValues.minutes },
+                                                                { label: "الثواني", value: countdownValues.seconds },
+                                                        ].map((item) => (
+                                                                <div
+                                                                        key={item.label}
+                                                                        className='rounded-2xl border border-bladi-green/25 bg-white/80 px-4 py-5 shadow-inner shadow-black/5'
+                                                                >
+                                                                        <div className='text-3xl font-black text-payzone-navy'>{String(item.value || 0).padStart(2, "0")}</div>
+                                                                        <div className='mt-2 text-xs font-semibold text-payzone-navy/70'>{item.label}</div>
+                                                                </div>
+                                                        ))}
+                                                </div>
                                         </div>
-                                        <a
-                                                href='https://calendar.google.com/calendar/render?action=TEMPLATE&text=سحوبات%20بلادي&details=موعد%20السحب%20القادم%20من%20بلادي&dates=20241015T190000Z/20241015T200000Z'
-                                                target='_blank'
-                                                rel='noreferrer'
-                                                className='rounded-full bg-payzone-gold px-6 py-3 text-lg font-bold text-payzone-navy shadow-lg shadow-payzone-gold/40 transition hover:scale-105 hover:bg-bladi-yellow'
-                                        >
-                                                أضف التذكير إلى التقويم
-                                        </a>
+                                        <div className='relative border-t border-bladi-green/15 bg-payzone-gold/10 px-8 py-4 text-sm font-semibold text-payzone-navy'>
+                                                {timeLeft?.expired
+                                                        ? "تم الوصول إلى وقت السحب الحالي. سيتم الإعلان عن سحب جديد قريباً."
+                                                        : nextDrawAt
+                                                                ? "تذكير: بطاقة السحب مجانية مع بوكس بلادي، والعد التنازلي يتحدث تلقائياً."
+                                                                : "ترقب الإعلان عن موعد السحب لتفعيل العد التنازلي."}
+                                        </div>
                                 </div>
                         </section>
 
@@ -273,15 +353,18 @@ const HomePage = () => {
                                 </div>
                                 <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
                                         {pastWinners.map((winner) => (
-                                                <div key={winner.name} className='flex flex-col gap-2 rounded-2xl bg-white/5 p-4 shadow-lg shadow-black/20 ring-1 ring-white/10'>
+                                                <div
+                                                        key={winner.name}
+                                                        className='flex flex-col gap-2 rounded-2xl bg-white/75 p-4 text-payzone-navy shadow-lg shadow-black/15 ring-1 ring-bladi-green/15'
+                                                >
                                                         <div className='flex items-center justify-between'>
-                                                                <div className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-payzone-gold to-payzone-indigo text-lg font-bold text-payzone-navy shadow-inner shadow-black/30'>
+                                                                <div className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-payzone-gold to-payzone-indigo text-lg font-bold text-payzone-navy shadow-inner shadow-black/20'>
                                                                         {winner.name.charAt(0)}
                                                                 </div>
-                                                                <span className='text-xs text-white/70'>{winner.city}</span>
+                                                                <span className='text-xs text-payzone-navy/70'>{winner.city}</span>
                                                         </div>
                                                         <div>
-                                                                <p className='text-sm text-white/60'>الجائزة</p>
+                                                                <p className='text-sm text-payzone-navy/60'>الجائزة</p>
                                                                 <p className='text-lg font-bold text-payzone-gold'>{winner.prize}</p>
                                                         </div>
                                                 </div>
@@ -289,13 +372,13 @@ const HomePage = () => {
                                 </div>
                         </section>
 
-                        <section id='contact' className='mx-auto max-w-6xl rounded-3xl bg-white/5 px-6 py-12 text-center shadow-2xl shadow-black/25 ring-1 ring-white/10'>
-                                <h3 className='text-3xl font-bold text-payzone-white'>شفافية السحب</h3>
-                                <p className='mt-4 text-white/80'>
+                        <section id='contact' className='mx-auto max-w-6xl rounded-3xl bg-white/85 px-6 py-12 text-center text-payzone-navy shadow-2xl shadow-black/20 ring-1 ring-bladi-green/15'>
+                                <h3 className='text-3xl font-bold text-payzone-navy'>شفافية السحب</h3>
+                                <p className='mt-4 text-payzone-navy/80'>
                                         تتم السحوبات بطريقة عشوائية وواضحة أمام الجمهور، مع إمكانية متابعة البث المباشر عند الإعلان. نحرص على إبلاغك بنتيجة مشاركتك فورًا لضمان ثقتك الكاملة.
                                 </p>
                                 <a
-                                        className='mt-6 inline-flex items-center justify-center rounded-full bg-payzone-indigo px-6 py-3 text-lg font-semibold text-payzone-white shadow-lg shadow-black/30 transition hover:bg-bladi-red'
+                                        className='mt-6 inline-flex items-center justify-center rounded-full bg-payzone-gold px-6 py-3 text-lg font-semibold text-payzone-navy shadow-lg shadow-payzone-gold/40 transition hover:bg-bladi-yellow'
                                         href='https://www.youtube.com/'
                                         target='_blank'
                                         rel='noreferrer'

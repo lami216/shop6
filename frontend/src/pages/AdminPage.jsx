@@ -1,4 +1,4 @@
-import { BarChart, PlusCircle, ShoppingBasket, FolderTree, TicketPercent, ClipboardList } from "lucide-react";
+import { BarChart, PlusCircle, ShoppingBasket, FolderTree, TicketPercent, ClipboardList, CalendarClock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import useTranslation from "../hooks/useTranslation";
@@ -10,6 +10,7 @@ import CategoryManager from "../components/CategoryManager";
 import AdminCoupons from "../components/AdminCoupons";
 import AdminOrders from "../components/AdminOrders";
 import { useProductStore } from "../stores/useProductStore";
+import DrawScheduleForm from "../components/DrawScheduleForm";
 
 const AdminPage = () => {
         const [activeTab, setActiveTab] = useState("create");
@@ -28,6 +29,7 @@ const AdminPage = () => {
                         { id: "analytics", label: t("admin.tabs.analytics"), icon: BarChart },
                         { id: "orders", label: t("admin.tabs.orders"), icon: ClipboardList },
                         { id: "coupons", label: t("admin.tabs.coupons"), icon: TicketPercent },
+                        { id: "draw", label: "موعد السحب", icon: CalendarClock },
                 ],
                 [t]
         );
@@ -68,6 +70,7 @@ const AdminPage = () => {
                                 {activeTab === "analytics" && <AnalyticsTab />}
                                 {activeTab === "orders" && <AdminOrders />}
                                 {activeTab === "coupons" && <AdminCoupons />}
+                                {activeTab === "draw" && <DrawScheduleForm />}
                         </div>
                 </div>
         );

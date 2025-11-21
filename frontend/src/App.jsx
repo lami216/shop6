@@ -46,8 +46,8 @@ function App() {
         }
 
         return (
-                <div className='relative min-h-screen bg-payzone-navy text-payzone-white'>
-                        <div className='relative z-50 pt-20'>
+                <div className='relative min-h-screen bg-gradient-to-b from-bladi-green-soft via-payzone-navy to-[#0a241b] text-payzone-white'>
+                        <div className='relative z-50 pt-24'>
                                 <Navbar />
                                 <Routes>
                                         <Route path='/' element={<HomePage />} />
@@ -68,6 +68,15 @@ function App() {
                         </div>
                         <Toaster />
                         <Footer />
+                        <a
+                                href='https://wa.me/22244455666'
+                                target='_blank'
+                                rel='noreferrer'
+                                className='fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-l from-payzone-gold to-bladi-yellow px-5 py-3 text-payzone-navy shadow-xl shadow-black/40 transition hover:scale-105 hover:shadow-2xl'
+                                aria-label='تواصل عبر واتساب'
+                        >
+                                <span className='text-lg font-semibold'>تواصل عبر واتساب</span>
+                        </a>
                 </div>
         );
 }

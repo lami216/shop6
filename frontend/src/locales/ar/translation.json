@@ -59,7 +59,10 @@
                         "couponAppliedSuccess": "تم تطبيق الكوبون بنجاح",
                         "couponCreated": "تم إنشاء الكوبون بنجاح",
                         "couponsCreated": "تم إنشاء {{count}} كوبونات بنجاح",
-                        "couponUpdated": "تم تحديث الكوبون بنجاح"
+                        "couponUpdated": "تم تحديث الكوبون بنجاح",
+                        "prizeCreated": "تم إنشاء الجائزة بنجاح",
+                        "prizeUpdated": "تم تحديث الجائزة بنجاح",
+                        "prizeDeleted": "تم حذف الجائزة"
                 }
         },
         "nav": {
@@ -122,6 +125,34 @@
                         "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه الفئة؟"
                 }
         },
+        "prizes": {
+                "manager": {
+                        "title": "إدارة الجوائز",
+                        "description": "أضف جوائز السحب مع صورها ليتم عرضها في الصفحة الرئيسية.",
+                        "form": {
+                                "name": "اسم الجائزة",
+                                "image": "صورة الجائزة",
+                                "chooseImage": "اختيار صورة",
+                                "changeImage": "تغيير الصورة",
+                                "imageHint": "ارفع صورة مربعة وواضحة للجائزة.",
+                                "nameRequired": "يرجى إدخال اسم الجائزة.",
+                                "imageRequired": "يرجى رفع صورة للجائزة.",
+                                "submitCreate": "حفظ الجائزة",
+                                "submitUpdate": "تحديث الجائزة",
+                                "cancelEdit": "إلغاء التعديل"
+                        },
+                        "list": {
+                                "title": "الجوائز الحالية",
+                                "empty": "لم تتم إضافة أي جوائز بعد.",
+                                "updatedAt": "آخر تحديث: {{date}}",
+                                "actions": {
+                                        "edit": "تعديل",
+                                        "delete": "حذف"
+                                }
+                        },
+                        "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه الجائزة؟"
+                }
+        },
         "admin": {
                 "dashboardTitle": "لوحة تحكم المشرف",
                 "tabs": {
@@ -129,8 +160,8 @@
                         "products": "المنتجات",
                         "analytics": "الإحصائيات",
                         "orders": "الطلبات",
-                        "categories": "الفئات",
-                        "coupons": "الكوبونات"
+                        "coupons": "الكوبونات",
+                        "prizes": "الجوائز"
                 },
                 "coupons": {
                         "title": "إدارة الكوبونات",
@@ -491,6 +522,10 @@
                 "updateQuantityError": "تعذر تحديث الكمية",
                 "couponCreateError": "تعذر إنشاء الكوبون",
                 "couponUpdateError": "تعذر تحديث الكوبون",
-                "couponFetchError": "تعذر تحميل الكوبونات"
+                "couponFetchError": "تعذر تحميل الكوبونات",
+                "createPrizeError": "تعذر إنشاء الجائزة",
+                "updatePrizeError": "تعذر تحديث الجائزة",
+                "deletePrizeError": "تعذر حذف الجائزة",
+                "fetchPrizesError": "تعذر تحميل الجوائز"
         }
 }

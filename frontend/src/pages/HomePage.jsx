@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { ShoppingBag, CreditCard, Gift, Trophy, CalendarClock } from "lucide-react";
-import { useProductStore } from "../stores/useProductStore";
-import { useCartStore } from "../stores/useCartStore";
-import { getProductPricing } from "../lib/getProductPricing";
 import { formatMRU } from "../lib/formatMRU";
 import useDrawStore from "../stores/useDrawStore";
+import { usePrizeStore } from "../stores/usePrizeStore";
 
 const HomePage = () => {
-        const { fetchAllProducts, products, loading: productsLoading } = useProductStore();
-        const { addToCart } = useCartStore();
+        const { prizes, fetchPrizes, loading: prizesLoading } = usePrizeStore();
         const { fetchNextDraw, nextDrawAt, loading: drawLoading } = useDrawStore();
         const [timeLeft, setTimeLeft] = useState(null);
 
@@ -33,9 +30,9 @@ const HomePage = () => {
         }, [nextDrawAt]);
 
         useEffect(() => {
-                fetchAllProducts();
+                fetchPrizes();
                 fetchNextDraw();
-        }, [fetchAllProducts, fetchNextDraw]);
+        }, [fetchPrizes, fetchNextDraw]);
 
         useEffect(() => {
                 if (!nextDrawAt) {
@@ -71,15 +68,11 @@ const HomePage = () => {
                 return () => clearInterval(interval);
         }, [nextDrawAt]);
 
-        const handleAddToCart = (product) => {
-                const { price, discountedPrice, isDiscounted, discountPercentage } = getProductPricing(product);
-                addToCart({ ...product, price, discountedPrice, isDiscounted, discountPercentage });
-        };
-
-        const getCoverImage = (product) => {
-                if (product.image) return product.image;
-                if (Array.isArray(product.images) && product.images.length > 0) {
-                        const [firstImage] = product.images;
+        const getCoverImage = (prize) => {
+                if (prize.imageUrl) return prize.imageUrl;
+                if (prize.image) return prize.image;
+                if (Array.isArray(prize.images) && prize.images.length > 0) {
+                        const [firstImage] = prize.images;
                         if (typeof firstImage === "string") return firstImage;
                         return firstImage?.url || "";
                 }
@@ -171,30 +164,24 @@ const HomePage = () => {
                                 </div>
 
                                 <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-                                        {productsLoading && (
+                                        {prizesLoading && (
                                                 <div className='col-span-full text-center text-white/70'>يتم تحميل الجوائز...</div>
                                         )}
-                                        {!productsLoading && products.length === 0 && (
+                                        {!prizesLoading && prizes.length === 0 && (
                                                 <div className='col-span-full text-center text-white/70'>لا توجد جوائز حالية، عُد لاحقًا لاكتشاف الإضافات الجديدة.</div>
                                         )}
-                                        {products.map((product) => {
-                                                const { price, discountedPrice, isDiscounted, discountPercentage } = getProductPricing(product);
-                                                const coverImage = getCoverImage(product);
+                                        {prizes.map((prize) => {
+                                                const coverImage = getCoverImage(prize);
                                                 return (
                                                         <div
-                                                                key={product._id}
+                                                                key={prize._id}
                                                                 className='group relative flex flex-col overflow-hidden rounded-2xl bg-white/80 text-payzone-navy shadow-xl shadow-black/15 ring-1 ring-bladi-green/15 transition hover:-translate-y-1 hover:shadow-2xl hover:ring-payzone-gold/60'
                                                         >
                                                                 <div className='relative h-56 w-full overflow-hidden bg-gradient-to-br from-[#0f5f45]/45 via-[#0b3f2f]/55 to-[#0f5f45]/45'>
-                                                                        {isDiscounted && (
-                                                                                <span className='absolute right-3 top-3 z-10 rounded-full bg-payzone-indigo px-3 py-1 text-xs font-bold text-payzone-white shadow-lg'>
-                                                                                        -{discountPercentage}%
-                                                                                </span>
-                                                                        )}
                                                                         {coverImage ? (
                                                                                 <img
                                                                                         src={coverImage}
-                                                                                        alt={product.name}
+                                                                                        alt={prize.name}
                                                                                         className='h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-110'
                                                                                 />
                                                                         ) : (
@@ -203,32 +190,10 @@ const HomePage = () => {
                                                                         <div className='absolute inset-0 bg-gradient-to-t from-[#0f5f45]/40 via-white/10 to-transparent' />
                                                                 </div>
                                                                 <div className='flex flex-1 flex-col gap-3 p-5'>
-                                                                        <h3 className='text-xl font-bold text-payzone-navy'>{product.name}</h3>
-                                                                        <p className='text-sm text-payzone-navy/80 line-clamp-2'>{product.description}</p>
-                                                                        <div className='flex flex-wrap items-baseline gap-2 text-lg font-bold text-payzone-gold'>
-                                                                                {isDiscounted ? (
-                                                                                        <>
-                                                                                                <span className='text-sm text-payzone-navy/60 line-through'>{formatMRU(price)}</span>
-                                                                                                <span>{formatMRU(discountedPrice)}</span>
-                                                                                        </>
-                                                                                ) : (
-                                                                                        <span>{formatMRU(price)}</span>
-                                                                                )}
-                                                                        </div>
-                                                                        <div className='mt-auto flex items-center justify-between gap-3'>
-                                                                                <a
-                                                                                        href={`/products/${product._id}`}
-                                                                                        className='rounded-full border border-bladi-green/30 bg-white/60 px-4 py-2 text-sm font-semibold text-payzone-navy transition hover:border-payzone-gold hover:bg-white'
-                                                                                >
-                                                                                        تفاصيل الجائزة
-                                                                                </a>
-                                                                                <button
-                                                                                        onClick={() => handleAddToCart(product)}
-                                                                                        className='flex items-center gap-2 rounded-full bg-payzone-gold px-4 py-2 text-sm font-bold text-payzone-navy transition hover:bg-bladi-yellow'
-                                                                                >
-                                                                                        <ShoppingBag size={18} />
-                                                                                        أضف للسلة
-                                                                                </button>
+                                                                        <h3 className='text-xl font-bold text-payzone-navy'>{prize.name}</h3>
+                                                                        <p className='text-sm text-payzone-navy/80 line-clamp-3'>بطاقة السحب المجانية قد تمنحك هذه الجائزة عند إعلان الفائزين.</p>
+                                                                        <div className='mt-auto rounded-xl bg-payzone-gold/10 px-4 py-3 text-sm font-semibold text-payzone-navy'>
+                                                                                قيمة تقديرية: {formatMRU(0).replace("0.00", "—")}
                                                                         </div>
                                                                 </div>
                                                         </div>
@@ -256,6 +221,13 @@ const HomePage = () => {
                                                 <p className='text-white/85'>
                                                         هدية متكاملة تحمل منتجات وهدايا موريتانية مختارة بعناية، وتأتي معها بطاقة سحب مجانية فور الشراء. الجوائز المعروضة في القسم التالي هي ما يمكنك الفوز به مع البطاقة المرافقة للبوكس.
                                                 </p>
+                                                <div className='overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-inner shadow-black/20'>
+                                                        <img
+                                                                src='/uploads/box-bladi-info.jpg'
+                                                                alt='صورة توضيحية لبوكس بلادي'
+                                                                className='h-full w-full object-cover'
+                                                        />
+                                                </div>
                                                 <div className='grid gap-3 sm:grid-cols-2'>
                                                         <div className='rounded-2xl bg-white/65 p-4 text-sm text-payzone-navy shadow-inner shadow-black/10 ring-1 ring-bladi-green/15'>
                                                                 البوكس نفسه هدية راقية تمثل ألوان العلم بروح هادئة.

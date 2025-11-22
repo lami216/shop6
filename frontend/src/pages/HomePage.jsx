@@ -196,17 +196,6 @@ const HomePage = () => {
                         <section id='box' className='relative overflow-hidden bg-gradient-to-l from-bilady-indigo/8 via-bilady-navy/18 to-bladi-green/30 py-16'>
                                 <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(242,199,69,0.2),transparent_35%),radial-gradient(circle_at_80%_30%,rgba(216,30,47,0.14),transparent_35%)]'></div>
                                 <div className='relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:px-8'>
-                                        <div className='relative mx-auto flex h-72 w-72 items-center justify-center rounded-[32px] bg-gradient-to-br from-bilady-gold via-bladi-yellow to-bilady-indigo p-6 shadow-2xl shadow-black/25 lg:h-80 lg:w-80'>
-                                                <div className='absolute -inset-4 rounded-[36px] border border-white/15'></div>
-                                                <div className='relative h-full w-full overflow-hidden rounded-[24px] bg-bladi-cream text-bilady-navy shadow-inner shadow-black/20'>
-                                                        <div className='absolute inset-0 rounded-[24px] border border-bilady-gold/40'></div>
-                                                        <div className='absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/10' />
-                                                        <div className='absolute inset-x-8 bottom-8 rounded-2xl bg-gradient-to-br from-bilady-gold to-bladi-yellow px-4 py-3 text-center text-lg font-black text-bilady-navy shadow-lg shadow-black/30'>
-                                                                بوكس بلادي
-                                                        </div>
-                                                </div>
-                                        </div>
-
                                         <div className='flex-1 space-y-4 text-center lg:text-right'>
                                                 <h3 className='text-3xl font-bold text-bilady-white'>ما هو بوكس بلادي؟</h3>
                                                 <p className='text-white/85'>

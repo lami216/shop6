@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { redis } from "../lib/redis.js";
-import cloudinary from "../lib/cloudinary.js";
+import { deleteImage, uploadImage } from "../lib/imagekit.js";
 import Product from "../models/product.model.js";
 
 const MAX_PRODUCT_IMAGES = 3;
@@ -9,6 +9,50 @@ const createHttpError = (status, message) => {
         const error = new Error(message);
         error.status = status;
         return error;
+};
+
+const getImageId = (image) => {
+        if (typeof image === "string") {
+                return image;
+        }
+
+        if (typeof image?.fileId === "string") {
+                return image.fileId;
+        }
+
+        if (typeof image?.public_id === "string") {
+                return image.public_id;
+        }
+
+        return null;
+};
+
+const normalizeImagesForResponse = (images) => {
+        if (!Array.isArray(images)) {
+                return [];
+        }
+
+        return images
+                .map((image) => {
+                        if (typeof image === "string") {
+                                const trimmed = image.trim();
+                                return trimmed ? { url: trimmed } : null;
+                        }
+
+                        const url =
+                                typeof image?.url === "string"
+                                        ? image.url
+                                        : typeof image?.secure_url === "string"
+                                                ? image.secure_url
+                                                : null;
+
+                        if (!url) return null;
+
+                        const fileId = image?.fileId || image?.public_id;
+
+                        return fileId ? { url, fileId } : { url };
+                })
+                .filter(Boolean);
 };
 
 const toBoolean = (value) => {
@@ -59,6 +103,9 @@ const normalizeDiscountSettings = ({
 const finalizeProductPayload = (product) => {
         if (!product) return product;
 
+        const normalizedImages = normalizeImagesForResponse(product.images);
+        const coverImage = product.image || normalizedImages[0]?.url || "";
+
         const price = Number(product.price) || 0;
         const percentage = Number(product.discountPercentage) || 0;
         const isDiscounted = Boolean(product.isDiscounted) && percentage > 0;
@@ -69,6 +116,8 @@ const finalizeProductPayload = (product) => {
 
         return {
                 ...product,
+                image: coverImage,
+                images: normalizedImages,
                 isDiscounted,
                 discountPercentage: effectivePercentage,
                 discountedPrice,
@@ -139,14 +188,16 @@ const cleanupUploadedImages = async (images) => {
         if (!images.length) {
                 return;
         }
-        const uploadedPublicIds = images.map((image) => image.public_id).filter(Boolean);
-        if (!uploadedPublicIds.length) {
+        const uploadedFileIds = images.map((image) => image.fileId).filter(Boolean);
+        if (!uploadedFileIds.length) {
                 return;
         }
-        try {
-                        await cloudinary.api.delete_resources(uploadedPublicIds);
-        } catch (cleanupError) {
-                console.log("Error cleaning up uploaded images after failure", cleanupError);
+        for (const fileId of uploadedFileIds) {
+                try {
+                        await deleteImage(fileId);
+                } catch (cleanupError) {
+                        console.log("Error cleaning up uploaded images after failure", cleanupError);
+                }
         }
 };
 
@@ -154,12 +205,10 @@ const uploadProductImages = async (images) => {
         const uploadedImages = [];
         try {
                 for (const base64Image of images) {
-                        const uploadResult = await cloudinary.uploader.upload(base64Image, {
-                                folder: "products",
-                        });
+                        const uploadResult = await uploadImage(base64Image, "products");
                         uploadedImages.push({
-                                url: uploadResult.secure_url,
-                                public_id: uploadResult.public_id,
+                                url: uploadResult.url,
+                                fileId: uploadResult.fileId,
                         });
                 }
                 return uploadedImages;
@@ -186,15 +235,7 @@ const collectExistingImageIds = (images) => {
         }
         return images
                 .map((image) => {
-                        if (typeof image === "string") {
-                                return image;
-                        }
-
-                        if (typeof image?.public_id === "string") {
-                                return image.public_id;
-                        }
-
-                        return null;
+                        return getImageId(image);
                 })
                 .filter(Boolean);
 };
@@ -209,8 +250,8 @@ const sanitizeNewImagesInput = (images) => {
 const splitCurrentImages = (currentImages, retainedIds) => {
         const images = Array.isArray(currentImages) ? currentImages : [];
         return {
-                retainedImages: images.filter((image) => retainedIds.includes(image.public_id)),
-                removedImages: images.filter((image) => !retainedIds.includes(image.public_id)),
+                retainedImages: images.filter((image) => retainedIds.includes(getImageId(image))),
+                removedImages: images.filter((image) => !retainedIds.includes(getImageId(image))),
         };
 };
 
@@ -224,18 +265,17 @@ const ensureImageCountsForUpdate = (retainedImages, newImages) => {
         }
 };
 
-const deleteImagesFromCloudinary = async (images) => {
-        const publicIdsToDelete = images.map((image) => image.public_id).filter(Boolean);
-        if (!publicIdsToDelete.length) {
+const deleteImagesFromImageKit = async (images) => {
+        const fileIdsToDelete = images.map((image) => getImageId(image)).filter(Boolean);
+        if (!fileIdsToDelete.length) {
                 return;
         }
-        try {
-                await cloudinary.api.delete_resources(publicIdsToDelete, {
-                        type: "upload",
-                        resource_type: "image",
-                });
-        } catch (cloudinaryError) {
-                console.log("Error deleting removed images from Cloudinary", cloudinaryError);
+        for (const fileId of fileIdsToDelete) {
+                try {
+                        await deleteImage(fileId);
+                } catch (imageKitError) {
+                        console.log("Error deleting removed images from ImageKit", imageKitError);
+                }
         }
 };
 
@@ -246,12 +286,10 @@ const uploadNewProductImages = async (newImages) => {
         const uploadedImages = [];
         try {
                 for (const base64Image of newImages) {
-                        const uploadResult = await cloudinary.uploader.upload(base64Image, {
-                                folder: "products",
-                        });
+                        const uploadResult = await uploadImage(base64Image, "products");
                         uploadedImages.push({
-                                url: uploadResult.secure_url,
-                                public_id: uploadResult.public_id,
+                                url: uploadResult.url,
+                                fileId: uploadResult.fileId,
                         });
                 }
                 return uploadedImages;
@@ -263,7 +301,10 @@ const uploadNewProductImages = async (newImages) => {
 
 const orderRetainedImages = (existingImageIds, retainedImages) => {
         const lookup = retainedImages.reduce((accumulator, image) => {
-                accumulator[image.public_id] = image;
+                const imageId = getImageId(image);
+                if (imageId) {
+                        accumulator[imageId] = image;
+                }
                 return accumulator;
         }, {});
         return existingImageIds.map((publicId) => lookup[publicId]).filter(Boolean);
@@ -393,6 +434,7 @@ export const searchProducts = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
+        let uploadedImages = [];
         try {
                 const { name, description, price, category, images, isDiscounted, discountPercentage } =
                         req.body;
@@ -409,14 +451,14 @@ export const createProduct = async (req, res) => {
                         rawIsDiscounted: isDiscounted,
                         rawDiscountPercentage: discountPercentage,
                 });
-                const uploadedImages = await uploadProductImages(sanitizedImages);
+                uploadedImages = await uploadProductImages(sanitizedImages);
                 const categoryAssignments = buildCategoryAssignments(normalizedCategory);
 
                 const productPayload = {
                         name: trimmedName,
                         description: trimmedDescription,
                         price: numericPrice,
-                        image: uploadedImages[0]?.url,
+                        image: uploadedImages[0]?.url || "",
                         images: uploadedImages,
                         ...categoryAssignments,
                         isDiscounted: discountSettings.isDiscounted,
@@ -427,6 +469,15 @@ export const createProduct = async (req, res) => {
 
                 res.status(201).json(serializeProduct(product));
         } catch (error) {
+                if (uploadedImages.length) {
+                        for (const image of uploadedImages) {
+                                try {
+                                        await deleteImage(image.fileId);
+                                } catch (cleanupError) {
+                                        console.log("Error cleaning up uploaded images after failure", cleanupError);
+                                }
+                        }
+                }
                 if (error.status) {
                         return res.status(error.status).json({ message: error.message });
                 }
@@ -436,6 +487,7 @@ export const createProduct = async (req, res) => {
 };
 
 export const updateProduct = async (req, res) => {
+        let uploadedImages = [];
         try {
                 const { id } = req.params;
                 const {
@@ -469,14 +521,15 @@ export const updateProduct = async (req, res) => {
                 );
 
                 ensureImageCountsForUpdate(retainedImages, sanitizedNewImages);
-                await deleteImagesFromCloudinary(removedImages);
-                const uploadedImages = await uploadNewProductImages(sanitizedNewImages);
+                await deleteImagesFromImageKit(removedImages);
+                uploadedImages = await uploadNewProductImages(sanitizedNewImages);
                 const finalImages = arrangeFinalImages(
                         existingImageIds,
                         retainedImages,
                         uploadedImages,
                         cover
                 );
+                const normalizedFinalImages = normalizeImagesForResponse(finalImages);
                 const numericPrice = ensureValidPriceValue(
                         price === undefined || price === null ? product.price : price
                 );
@@ -498,8 +551,9 @@ export const updateProduct = async (req, res) => {
                 product.category = categoryAssignments.category;
                 product.categorySlug = categoryAssignments.categorySlug;
                 product.categoryId = categoryAssignments.categoryId || null;
-                product.images = finalImages.length ? finalImages : product.images;
-                product.image = finalImages[0]?.url || product.image;
+                product.images = normalizedFinalImages.length ? normalizedFinalImages : product.images;
+                product.image =
+                        (normalizedFinalImages.length ? normalizedFinalImages[0]?.url : null) || product.image;
                 product.isDiscounted = discountSettings.isDiscounted;
                 product.discountPercentage = discountSettings.discountPercentage;
 
@@ -511,6 +565,9 @@ export const updateProduct = async (req, res) => {
 
                 res.json(serializeProduct(updatedProduct));
         } catch (error) {
+                if (uploadedImages.length) {
+                        await deleteImagesFromImageKit(uploadedImages);
+                }
                 if (error.status) {
                         return res.status(error.status).json({ message: error.message });
                 }
@@ -527,20 +584,17 @@ export const deleteProduct = async (req, res) => {
                         return res.status(404).json({ message: "Product not found" });
                 }
 
-                const publicIds = Array.isArray(product.images)
-                        ? product.images
-                                  .map((image) => (typeof image === "object" ? image.public_id : null))
-                                  .filter(Boolean)
+                const fileIds = Array.isArray(product.images)
+                        ? product.images.map((image) => getImageId(image)).filter(Boolean)
                         : [];
 
-                if (publicIds.length) {
-                        try {
-                                await cloudinary.api.delete_resources(publicIds, {
-                                        type: "upload",
-                                        resource_type: "image",
-                                });
-                        } catch (cloudinaryError) {
-                                console.log("Error deleting images from Cloudinary", cloudinaryError);
+                if (fileIds.length) {
+                        for (const fileId of fileIds) {
+                                try {
+                                        await deleteImage(fileId);
+                                } catch (imageKitError) {
+                                        console.log("Error deleting images from ImageKit", imageKitError);
+                                }
                         }
                 }
 

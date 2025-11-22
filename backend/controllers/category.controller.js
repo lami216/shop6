@@ -1,12 +1,5 @@
 import Category from "../models/category.model.js";
-import cloudinary from "../lib/cloudinary.js";
-
-const isCloudinaryConfigured = () =>
-        Boolean(
-                process.env.CLOUDINARY_CLOUD_NAME &&
-                        process.env.CLOUDINARY_API_KEY &&
-                        process.env.CLOUDINARY_API_SECRET
-        );
+import { deleteImage, uploadImage } from "../lib/imagekit.js";
 
 const createHttpError = (status, message) => {
         const error = new Error(message);
@@ -15,26 +8,16 @@ const createHttpError = (status, message) => {
 };
 
 const uploadCategoryImage = async (image) => {
-        if (!image || typeof image !== "string") {
+        if (!image || typeof image !== "string" || !image.startsWith("data:")) {
                 throw new Error("INVALID_IMAGE_FORMAT");
         }
 
-        const isDataUri = image.startsWith("data:");
+        const uploadResult = await uploadImage(image, "categories");
 
-        if (!isDataUri) {
-                throw new Error("INVALID_IMAGE_FORMAT");
-        }
-
-        if (!isCloudinaryConfigured()) {
-                return {
-                        secure_url: image,
-                        public_id: null,
-                };
-        }
-
-        return await cloudinary.uploader.upload(image, {
-                folder: "categories",
-        });
+        return {
+                secure_url: uploadResult.url,
+                public_id: uploadResult.fileId,
+        };
 };
 
 const slugify = (value) => {
@@ -154,25 +137,26 @@ const applyDescriptionUpdate = (category, description) => {
         }
 };
 
-const cleanupCategoryImage = async (category) => {
-        if (category.imagePublicId && isCloudinaryConfigured()) {
-                try {
-                        await cloudinary.uploader.destroy(category.imagePublicId);
-                } catch (cleanupError) {
-                        console.log("Failed to delete previous category image", cleanupError.message);
-                }
-        }
-};
-
 const updateCategoryImage = async (category, image) => {
-        if (typeof image !== "string" || !image.startsWith("data:")) {
+        if (image === undefined) {
                 return;
         }
 
+        if (typeof image !== "string" || !image.startsWith("data:")) {
+                throw createHttpError(400, "Invalid category image format");
+        }
+
         const uploadResult = ensureUploadSuccess(await handleImageUpload(image));
-        await cleanupCategoryImage(category);
+        const fileIdToDelete = category.imageFileId || category.imagePublicId;
+        if (fileIdToDelete) {
+                        try {
+                                await deleteImage(fileIdToDelete);
+                        } catch (cleanupError) {
+                                console.log("Failed to delete previous category image", cleanupError.message);
+                        }
+        }
         category.imageUrl = uploadResult.secureUrl;
-        category.imagePublicId = uploadResult.publicId;
+        category.imageFileId = uploadResult.publicId || null;
 };
 
 export const getCategories = async (req, res) => {
@@ -197,7 +181,7 @@ export const createCategory = async (req, res) => {
                         description: trimmedDescription.toString(),
                         slug: slug.toString(),
                         imageUrl: uploadResult.secureUrl,
-                        imagePublicId: uploadResult.publicId,
+                        imageFileId: uploadResult.publicId,
                 };
 
                 const category = await Category.create(categoryData);
@@ -248,9 +232,10 @@ export const deleteCategory = async (req, res) => {
                         return res.status(404).json({ message: "Category not found" });
                 }
 
-                if (category.imagePublicId && isCloudinaryConfigured()) {
+                const fileIdToDelete = category.imageFileId || category.imagePublicId;
+                if (fileIdToDelete) {
                         try {
-                                await cloudinary.uploader.destroy(category.imagePublicId);
+                                await deleteImage(fileIdToDelete);
                         } catch (cleanupError) {
                                 console.log("Failed to delete category image", cleanupError.message);
                         }

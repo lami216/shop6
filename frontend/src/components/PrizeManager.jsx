@@ -113,16 +113,16 @@ const PrizeManager = () => {
 
         return (
                 <div className='mx-auto mb-12 max-w-5xl space-y-8'>
-                        <div className='rounded-xl border border-payzone-indigo/40 bg-white/5 p-6 shadow-lg backdrop-blur-sm'>
+                        <div className='rounded-xl border border-bilady-indigo/40 bg-white/5 p-6 shadow-lg backdrop-blur-sm'>
                                 <div className='mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                                         <div>
-                                                <h2 className='text-2xl font-semibold text-payzone-gold'>{t("prizes.manager.title")}</h2>
+                                                <h2 className='text-2xl font-semibold text-bilady-gold'>{t("prizes.manager.title")}</h2>
                                                 <p className='text-sm text-white/70'>{t("prizes.manager.description")}</p>
                                         </div>
                                         {selectedPrize && (
                                                 <button
                                                         type='button'
-                                                        className='inline-flex items-center gap-2 rounded-md border border-payzone-indigo/40 px-3 py-1 text-sm text-white transition hover:border-payzone-gold'
+                                                        className='inline-flex items-center gap-2 rounded-md border border-bilady-indigo/40 px-3 py-1 text-sm text-white transition hover:border-bilady-gold'
                                                         onClick={handleCancelEdit}
                                                 >
                                                         <X className='h-4 w-4' />
@@ -140,7 +140,7 @@ const PrizeManager = () => {
                                                         <input
                                                                 id='prize-name'
                                                                 type='text'
-                                                                className='mt-1 block w-full rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-white focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo'
+                                                                className='mt-1 block w-full rounded-md border border-bilady-indigo/40 bg-bilady-navy/60 px-3 py-2 text-white focus:border-bilady-gold focus:outline-none focus:ring-2 focus:ring-bilady-indigo'
                                                                 value={formState.name}
                                                                 onChange={(event) =>
                                                                         setFormState((previous) => ({
@@ -165,7 +165,7 @@ const PrizeManager = () => {
                                                                 />
                                                                 <label
                                                                         htmlFor='prize-image'
-                                                                        className='inline-flex cursor-pointer items-center gap-2 rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-sm text-white transition hover:border-payzone-gold hover:bg-payzone-navy/80'
+                                                                        className='inline-flex cursor-pointer items-center gap-2 rounded-md border border-bilady-indigo/40 bg-bilady-navy/60 px-3 py-2 text-sm text-white transition hover:border-bilady-gold hover:bg-bilady-navy/80'
                                                                 >
                                                                         <ImagePlus className='h-4 w-4' />
                                                                         {formState.preview
@@ -186,7 +186,7 @@ const PrizeManager = () => {
 
                                         <button
                                                 type='submit'
-                                                className='inline-flex items-center justify-center gap-2 rounded-md bg-payzone-gold px-4 py-2 font-semibold text-payzone-navy transition hover:bg-[#b8873d] focus:outline-none focus:ring-2 focus:ring-payzone-indigo disabled:opacity-50'
+                                                className='inline-flex items-center justify-center gap-2 rounded-md bg-bilady-gold px-4 py-2 font-semibold text-bilady-navy transition hover:bg-[#b8873d] focus:outline-none focus:ring-2 focus:ring-bilady-indigo disabled:opacity-50'
                                                 disabled={loading}
                                         >
                                                 {selectedPrize ? <Save className='h-4 w-4' /> : <Upload className='h-4 w-4' />}
@@ -197,8 +197,8 @@ const PrizeManager = () => {
                                 </form>
                         </div>
 
-                        <div className='rounded-xl border border-payzone-indigo/40 bg-white/5 p-6 shadow-lg backdrop-blur-sm'>
-                                <h3 className='mb-4 text-xl font-semibold text-payzone-gold'>{t("prizes.manager.list.title")}</h3>
+                        <div className='rounded-xl border border-bilady-indigo/40 bg-white/5 p-6 shadow-lg backdrop-blur-sm'>
+                                <h3 className='mb-4 text-xl font-semibold text-bilady-gold'>{t("prizes.manager.list.title")}</h3>
                                 {prizes.length === 0 ? (
                                         <p className='text-sm text-white/70'>{t("prizes.manager.list.empty")}</p>
                                 ) : (
@@ -206,7 +206,7 @@ const PrizeManager = () => {
                                                 {prizes.map((prize) => (
                                                         <li
                                                                 key={prize._id}
-                                                                className='flex flex-col gap-3 rounded-lg border border-white/10 bg-payzone-navy/40 p-4 shadow-inner'
+                                                                className='flex flex-col gap-3 rounded-lg border border-white/10 bg-bilady-navy/40 p-4 shadow-inner'
                                                         >
                                                                 <div className='flex items-center gap-4'>
                                                                         <img

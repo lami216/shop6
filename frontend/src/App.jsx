@@ -46,7 +46,7 @@ function App() {
         }
 
         return (
-                <div className='relative min-h-screen overflow-hidden text-payzone-white'>
+                <div className='relative min-h-screen overflow-hidden text-bilady-white'>
                         <div className='pointer-events-none absolute inset-0 -z-20 bg-gradient-to-b from-[#0b3f2f] via-[#0f5f45] to-[#0b3f2f]' />
                         <div className='pointer-events-none absolute inset-0 -z-10 bilady-flag-overlay opacity-70' />
                         <div className='pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#0b3f2f]/60 via-[#0f5f45]/55 to-[#0b3f2f]/65' />
@@ -75,7 +75,7 @@ function App() {
                                 href='https://wa.me/22244455666'
                                 target='_blank'
                                 rel='noreferrer'
-                                className='fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-l from-payzone-gold to-bladi-yellow px-5 py-3 text-payzone-navy shadow-xl shadow-black/40 transition hover:scale-105 hover:shadow-2xl'
+                                className='fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-l from-bilady-gold to-bladi-yellow px-5 py-3 text-bilady-navy shadow-xl shadow-black/40 transition hover:scale-105 hover:shadow-2xl'
                                 aria-label='تواصل عبر واتساب'
                         >
                                 <span className='text-lg font-semibold'>تواصل عبر واتساب</span>

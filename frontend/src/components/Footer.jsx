@@ -3,11 +3,11 @@ import SocialLinks from "./SocialLinks";
 const Footer = () => {
         const buildTime = new Date(import.meta.env.VITE_BUILD_TIME).toLocaleString();
         return (
-                <footer className='mt-16 border-t border-white/10 bg-payzone-navy/95 text-payzone-white'>
+                <footer className='mt-16 border-t border-white/10 bg-bilady-navy/95 text-bilady-white'>
                         <div className='container mx-auto px-4 py-10'>
                                 <div className='grid gap-8 md:grid-cols-3 md:text-right'>
                                         <div className='space-y-3'>
-                                                <h4 className='text-xl font-bold text-payzone-gold'>بلادي | Biladi</h4>
+                                                <h4 className='text-xl font-bold text-bilady-gold'>بلادي | Biladi</h4>
                                                 <p className='text-sm text-white/70'>
                                                         سحوبات وطنية بألوان العلم الموريتاني مع تجربة شراء سلسة وفرص حقيقية للفوز.
                                                 </p>
@@ -16,16 +16,16 @@ const Footer = () => {
                                                 <h5 className='text-lg font-semibold'>روابط سريعة</h5>
                                                 <ul className='space-y-1 text-sm text-white/75'>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='#hero'>الرئيسية</a>
+                                                                <a className='hover:text-bilady-gold' href='#hero'>الرئيسية</a>
                                                         </li>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='#prizes'>الجوائز</a>
+                                                                <a className='hover:text-bilady-gold' href='#prizes'>الجوائز</a>
                                                         </li>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='#how'>طريقة المشاركة</a>
+                                                                <a className='hover:text-bilady-gold' href='#how'>طريقة المشاركة</a>
                                                         </li>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='#contact'>تواصل معنا</a>
+                                                                <a className='hover:text-bilady-gold' href='#contact'>تواصل معنا</a>
                                                         </li>
                                                 </ul>
                                         </div>
@@ -33,13 +33,13 @@ const Footer = () => {
                                                 <h5 className='text-lg font-semibold'>سياسات</h5>
                                                 <ul className='space-y-1 text-sm text-white/75'>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='#'>سياسة الخصوصية</a>
+                                                                <a className='hover:text-bilady-gold' href='#'>سياسة الخصوصية</a>
                                                         </li>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='#'>الشروط والأحكام</a>
+                                                                <a className='hover:text-bilady-gold' href='#'>الشروط والأحكام</a>
                                                         </li>
                                                         <li>
-                                                                <a className='hover:text-payzone-gold' href='mailto:contact@biladi.mr'>contact@biladi.mr</a>
+                                                                <a className='hover:text-bilady-gold' href='mailto:contact@bilady.mr'>contact@bilady.mr</a>
                                                         </li>
                                                 </ul>
                                         </div>

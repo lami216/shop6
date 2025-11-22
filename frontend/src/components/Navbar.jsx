@@ -12,16 +12,16 @@ const Navbar = () => {
         const { t } = useTranslation();
 
         return (
-                <header className='fixed top-0 right-0 z-50 w-full bg-gradient-to-l from-bladi-green via-payzone-navy to-bladi-green-soft/80 shadow-lg shadow-black/30 backdrop-blur-xl'>
+                <header className='fixed top-0 right-0 z-50 w-full bg-gradient-to-l from-bladi-green via-bilady-navy to-bladi-green-soft/80 shadow-lg shadow-black/30 backdrop-blur-xl'>
                         <div className='container mx-auto px-4 py-3'>
                                 <div className='flex flex-wrap items-center justify-between gap-4'>
-                                        <Link to='/' className='flex items-center gap-3 text-payzone-white'>
-                                                <div className='flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-payzone-gold via-bladi-yellow to-payzone-indigo text-payzone-navy font-extrabold shadow-lg shadow-black/30'>
+                                        <Link to='/' className='flex items-center gap-3 text-bilady-white'>
+                                                <div className='flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-bilady-gold via-bladi-yellow to-bilady-indigo text-bilady-navy font-extrabold shadow-lg shadow-black/30'>
                                                         ب
                                                 </div>
                                                 <div className='flex flex-col text-right leading-tight'>
                                                         <span className='text-lg font-bold tracking-wide'>Bilady</span>
-                                                        <span className='text-sm font-semibold text-payzone-gold'>بلادي</span>
+                                                        <span className='text-sm font-semibold text-bilady-gold'>بلادي</span>
                                                 </div>
                                         </Link>
 
@@ -44,7 +44,7 @@ const Navbar = () => {
                                                         </a>
                                                         {isAdmin && (
                                                                 <Link
-                                                                        className='flex items-center gap-2 rounded-full bg-payzone-gold px-3 py-1 text-payzone-navy transition hover:shadow-lg hover:shadow-payzone-gold/40'
+                                                                        className='flex items-center gap-2 rounded-full bg-bilady-gold px-3 py-1 text-bilady-navy transition hover:shadow-lg hover:shadow-bilady-gold/40'
                                                                         to={'/secret-dashboard'}
                                                                 >
                                                                         <Lock className='inline-block' size={18} />
@@ -56,19 +56,19 @@ const Navbar = () => {
                                                 <div className='flex items-center gap-2'>
                                                         <Link
                                                                 to={'/cart'}
-                                                                className='relative flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-payzone-white transition duration-300 ease-in-out hover:bg-white/20'
+                                                                className='relative flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-bilady-white transition duration-300 ease-in-out hover:bg-white/20'
                                                         >
                                                                 <ShoppingCart size={18} />
                                                                 <span className='hidden sm:inline'>{t("nav.cart")}</span>
                                                                 {cartItemCount > 0 && (
-                                                                        <span className='absolute -top-2 -right-2 rounded-full bg-payzone-gold px-2 py-0.5 text-xs font-semibold text-payzone-navy shadow-sm'>
+                                                                        <span className='absolute -top-2 -right-2 rounded-full bg-bilady-gold px-2 py-0.5 text-xs font-semibold text-bilady-navy shadow-sm'>
                                                                                 {cartItemCount}
                                                                         </span>
                                                                 )}
                                                         </Link>
                                                         {user ? (
                                                                 <button
-                                                                        className='flex items-center gap-2 rounded-full bg-payzone-indigo px-4 py-2 text-payzone-white transition duration-300 ease-in-out hover:bg-bladi-red'
+                                                                        className='flex items-center gap-2 rounded-full bg-bilady-indigo px-4 py-2 text-bilady-white transition duration-300 ease-in-out hover:bg-bladi-red'
                                                                         onClick={logout}
                                                                 >
                                                                         <LogOut size={18} />
@@ -78,14 +78,14 @@ const Navbar = () => {
                                                                 <>
                                                                         <Link
                                                                                 to={'/signup'}
-                                                                                className='flex items-center gap-2 rounded-full bg-payzone-gold px-4 py-2 font-semibold text-payzone-navy transition duration-300 ease-in-out hover:bg-bladi-yellow'
+                                                                                className='flex items-center gap-2 rounded-full bg-bilady-gold px-4 py-2 font-semibold text-bilady-navy transition duration-300 ease-in-out hover:bg-bladi-yellow'
                                                                         >
                                                                                 <UserPlus size={18} />
                                                                                 {t("nav.signup")}
                                                                         </Link>
                                                                         <Link
                                                                                 to={'/login'}
-                                                                                className='flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-payzone-white transition duration-300 ease-in-out hover:bg-white/25'
+                                                                                className='flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-bilady-white transition duration-300 ease-in-out hover:bg-white/25'
                                                                         >
                                                                                 <LogIn size={18} />
                                                                                 {t("nav.login")}

@@ -1,16 +1,14 @@
-import { BarChart, PlusCircle, ShoppingBasket, TicketPercent, ClipboardList, CalendarClock, Gift } from "lucide-react";
+import { PlusCircle, ShoppingBasket, CalendarClock, Gift, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import useTranslation from "../hooks/useTranslation";
 
-import AnalyticsTab from "../components/AnalyticsTab";
 import CreateProductForm from "../components/CreateProductForm";
 import ProductsList from "../components/ProductsList";
-import AdminCoupons from "../components/AdminCoupons";
-import AdminOrders from "../components/AdminOrders";
 import { useProductStore } from "../stores/useProductStore";
 import DrawScheduleForm from "../components/DrawScheduleForm";
 import PrizeManager from "../components/PrizeManager";
+import WinnersManager from "../components/WinnersManager";
 
 const AdminPage = () => {
         const [activeTab, setActiveTab] = useState("create");
@@ -26,9 +24,7 @@ const AdminPage = () => {
                         { id: "create", label: t("admin.tabs.create"), icon: PlusCircle },
                         { id: "products", label: t("admin.tabs.products"), icon: ShoppingBasket },
                         { id: "prizes", label: t("admin.tabs.prizes"), icon: Gift },
-                        { id: "analytics", label: t("admin.tabs.analytics"), icon: BarChart },
-                        { id: "orders", label: t("admin.tabs.orders"), icon: ClipboardList },
-                        { id: "coupons", label: t("admin.tabs.coupons"), icon: TicketPercent },
+                        { id: "winners", label: t("admin.tabs.winners"), icon: Trophy },
                         { id: "draw", label: "موعد السحب", icon: CalendarClock },
                 ],
                 [t]
@@ -38,7 +34,7 @@ const AdminPage = () => {
                 <div className='relative min-h-screen overflow-hidden'>
                         <div className='container relative z-10 mx-auto px-4 py-16'>
                                 <motion.h1
-                                        className='mb-8 text-center text-4xl font-bold text-payzone-gold'
+                                        className='mb-8 text-center text-4xl font-bold text-bilady-gold'
                                         initial={{ opacity: 0, y: -20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.8 }}
@@ -54,7 +50,7 @@ const AdminPage = () => {
                                                                 onClick={() => setActiveTab(tab.id)}
                                                                 className={`flex flex-shrink-0 items-center rounded-md px-4 py-2 transition-colors duration-200 ${
                                                                         activeTab === tab.id
-                                                                                ? "bg-payzone-gold text-payzone-navy"
+                                                                                ? "bg-bilady-gold text-bilady-navy"
                                                                                 : "bg-white/10 text-white/80 hover:bg-white/20"
                                                                 }`}
                                                         >
@@ -67,9 +63,7 @@ const AdminPage = () => {
                                 {activeTab === "create" && <CreateProductForm />}
                                 {activeTab === "products" && <ProductsList onEdit={() => setActiveTab("create")} />}
                                 {activeTab === "prizes" && <PrizeManager />}
-                                {activeTab === "analytics" && <AnalyticsTab />}
-                                {activeTab === "orders" && <AdminOrders />}
-                                {activeTab === "coupons" && <AdminCoupons />}
+                                {activeTab === "winners" && <WinnersManager />}
                                 {activeTab === "draw" && <DrawScheduleForm />}
                         </div>
                 </div>

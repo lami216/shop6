@@ -19,7 +19,10 @@ const buildDateFromParts = (datePart, timePart) => {
 export const getDrawSchedule = async (_req, res) => {
         try {
                 const schedule = await DrawSchedule.findOne().sort({ updatedAt: -1 }).lean();
-                return res.json({ nextDrawAt: schedule?.nextDrawAt || null });
+                return res.json({
+                        nextDrawAt: schedule?.nextDrawAt || null,
+                        liveStreamUrl: schedule?.liveStreamUrl || "",
+                });
         } catch (error) {
                 console.log("Error in getDrawSchedule controller", error.message);
                 return res.status(500).json({ message: "Failed to load draw schedule" });
@@ -31,6 +34,7 @@ export const updateDrawSchedule = async (req, res) => {
                         const rawDate = typeof req.body.nextDrawDate === "string" ? req.body.nextDrawDate.trim() : "";
                         const rawTime = normalizeTimeValue(req.body.nextDrawTime);
                         const rawNextDrawAt = typeof req.body.nextDrawAt === "string" ? req.body.nextDrawAt.trim() : "";
+                        const liveStreamUrl = typeof req.body.liveStreamUrl === "string" ? req.body.liveStreamUrl.trim() : "";
 
                         let parsedDate = null;
 
@@ -49,9 +53,10 @@ export const updateDrawSchedule = async (req, res) => {
 
                         const schedule = (await DrawSchedule.findOne()) || new DrawSchedule();
                         schedule.nextDrawAt = parsedDate;
+                        schedule.liveStreamUrl = liveStreamUrl;
                         await schedule.save();
 
-                        return res.json({ nextDrawAt: schedule.nextDrawAt });
+                        return res.json({ nextDrawAt: schedule.nextDrawAt, liveStreamUrl: schedule.liveStreamUrl });
         } catch (error) {
                 console.log("Error in updateDrawSchedule controller", error.message);
                 return res.status(500).json({ message: "Failed to update draw schedule" });

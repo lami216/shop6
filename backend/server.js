@@ -14,6 +14,7 @@ import publicConfigRoutes from "./routes/publicConfig.route.js";
 import orderRoutes from "./routes/order.route.js";
 import drawScheduleRoutes from "./routes/drawSchedule.route.js";
 import prizeRoutes from "./routes/prize.route.js";
+import winnerRoutes from "./routes/winner.route.js";
 
 import { connectDB } from "./lib/db.js";
 
@@ -41,6 +42,7 @@ app.use("/api/public-config", publicConfigRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/draw-schedule", drawScheduleRoutes);
 app.use("/api/prizes", prizeRoutes);
+app.use("/api/winners", winnerRoutes);
 
 /* ----------------- Production static -----------------
    كان يتم بناء المسار كـ "/var/www/shop1/backend/frontend/dist"

@@ -4,7 +4,6 @@ import { PlusCircle, Upload, Loader, Star, X, Save } from "lucide-react";
 import toast from "react-hot-toast";
 import useTranslation from "../hooks/useTranslation";
 import { useProductStore } from "../stores/useProductStore";
-import { useCategoryStore } from "../stores/useCategoryStore";
 import { formatMRU } from "../lib/formatMRU";
 
 const MAX_IMAGES = 3;
@@ -13,7 +12,6 @@ const createInitialFormState = () => ({
         name: "",
         description: "",
         price: "",
-        category: "",
         isDiscounted: false,
         discountPercentage: "",
         existingImages: [],
@@ -39,10 +37,6 @@ const validateProductFormFields = (state, totalImages, t) => {
         const trimmedDescription = state.description.trim();
         if (!trimmedDescription) {
                 return { error: t("admin.createProduct.messages.descriptionRequired") };
-        }
-
-        if (!state.category) {
-                return { error: t("admin.createProduct.messages.categoryRequired") };
         }
 
         if (totalImages === 0) {
@@ -87,12 +81,7 @@ const CreateProductForm = () => {
                 selectedProduct,
                 clearSelectedProduct,
         } = useProductStore();
-        const { categories, fetchCategories } = useCategoryStore();
         const { t } = useTranslation();
-
-        useEffect(() => {
-                fetchCategories();
-        }, [fetchCategories]);
 
         useEffect(() => {
                 if (!selectedProduct) {
@@ -116,7 +105,6 @@ const CreateProductForm = () => {
                                 selectedProduct.price !== undefined && selectedProduct.price !== null
                                         ? String(selectedProduct.price)
                                         : "",
-                        category: selectedProduct.category ?? "",
                         isDiscounted: Boolean(selectedProduct.isDiscounted) &&
                                 Number(selectedProduct.discountPercentage) > 0,
                         discountPercentage:
@@ -338,15 +326,14 @@ const CreateProductForm = () => {
                 const { existing, fresh } = buildOrderedImages();
 
                 try {
-                        if (isEditing && selectedProduct) {
-                                await updateProduct(selectedProduct._id, {
-                                        name: fieldValidation.trimmedName,
-                                        description: fieldValidation.trimmedDescription,
-                                        price: fieldValidation.numericPrice,
-                                        category: formState.category,
-                                        existingImages: existing.map((image) => image.public_id).filter(Boolean),
-                                        newImages: fresh,
-                                        cover: {
+                                if (isEditing && selectedProduct) {
+                                        await updateProduct(selectedProduct._id, {
+                                                name: fieldValidation.trimmedName,
+                                                description: fieldValidation.trimmedDescription,
+                                                price: fieldValidation.numericPrice,
+                                                existingImages: existing.map((image) => image.public_id).filter(Boolean),
+                                                newImages: fresh,
+                                                cover: {
                                                 source: formState.coverSource,
                                                 index: formState.coverIndex,
                                         },
@@ -359,7 +346,6 @@ const CreateProductForm = () => {
                                         name: fieldValidation.trimmedName,
                                         description: fieldValidation.trimmedDescription,
                                         price: fieldValidation.numericPrice,
-                                        category: formState.category,
                                         images: fresh,
                                         isDiscounted: hasDiscountToggle,
                                         discountPercentage: normalizedDiscount,
@@ -520,31 +506,6 @@ const CreateProductForm = () => {
                                                         )}
                                                 </div>
                                         )}
-                                </div>
-
-                                <div>
-                                        <label htmlFor='category' className='block text-sm font-medium text-white/80'>
-                                                {t("admin.createProduct.fields.category")}
-                                        </label>
-                                        <select
-                                                id='category'
-                                                name='category'
-                                                value={formState.category}
-                                                onChange={(event) =>
-                                                        setFormState({ ...formState, category: event.target.value })
-                                                }
-                                                className='mt-1 block w-full rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-white focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo'
-                                                required
-                                        >
-                                                <option value=''>
-                                                        {t("admin.createProduct.placeholders.category")}
-                                                </option>
-                                                {categories.map((category) => (
-                                                        <option key={category._id} value={category.slug}>
-                                                                {category.name}
-                                                        </option>
-                                                ))}
-                                        </select>
                                 </div>
 
                                 <div className='mt-1 flex items-center'>

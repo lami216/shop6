@@ -156,8 +156,13 @@ const ensureValidPriceValue = (price) => {
         return numericPrice;
 };
 
-const ensureCategoryValue = (category) => {
-        return ensureNonEmptyTrimmed(category, "Category is required");
+const normalizeCategoryValue = (category) => {
+        if (typeof category !== "string") {
+                return null;
+        }
+
+        const trimmed = category.trim();
+        return trimmed.length ? trimmed : null;
 };
 
 const validateCreateImages = (images) => {
@@ -219,6 +224,14 @@ const uploadProductImages = async (images) => {
 };
 
 const buildCategoryAssignments = (categoryValue) => {
+        if (!categoryValue) {
+                return {
+                        category: null,
+                        categorySlug: null,
+                        categoryId: null,
+                };
+        }
+
         const payload = {
                 category: categoryValue,
                 categorySlug: categoryValue,
@@ -446,7 +459,7 @@ export const createProduct = async (req, res) => {
                 );
                 const sanitizedImages = validateCreateImages(images);
                 const numericPrice = ensureValidPriceValue(price);
-                const normalizedCategory = ensureCategoryValue(category);
+                const normalizedCategory = normalizeCategoryValue(category);
                 const discountSettings = prepareDiscountSettings({
                         rawIsDiscounted: isDiscounted,
                         rawDiscountPercentage: discountPercentage,
@@ -533,10 +546,10 @@ export const updateProduct = async (req, res) => {
                 const numericPrice = ensureValidPriceValue(
                         price === undefined || price === null ? product.price : price
                 );
-                const nextCategory =
-                        typeof category === "string" && category.trim().length
-                                ? category.trim()
-                                : product.category;
+                const hasCategoryField = category !== undefined;
+                const nextCategory = hasCategoryField
+                        ? normalizeCategoryValue(category)
+                        : normalizeCategoryValue(product.category);
                 const discountSettings = prepareDiscountSettings({
                         rawIsDiscounted: isDiscounted,
                         rawDiscountPercentage: discountPercentage,

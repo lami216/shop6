@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import apiClient from "../lib/apiClient";
 import { translate } from "../lib/locale";
 
-export const usePrizeStore = create((set, get) => ({
+export const usePrizeStore = create((set) => ({
         prizes: [],
         selectedPrize: null,
         loading: false,

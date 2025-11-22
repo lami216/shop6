@@ -364,11 +364,11 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                 <div ref={wrapperRef} className='mx-auto flex w-full max-w-4xl flex-col gap-3'>
                         <form
                                 onSubmit={handleSubmit}
-                                className='flex flex-col gap-3 rounded-3xl border border-white/10 bg-payzone-navy p-4 shadow-xl'
+                                className='flex flex-col gap-3 rounded-3xl border border-white/10 bg-bilady-navy p-4 shadow-xl'
                         >
                                 <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
                                         <div className='relative flex-1'>
-                                                <SearchIcon className='pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-payzone-gold/80' />
+                                                <SearchIcon className='pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-bilady-gold/80' />
                                                 <input
                                                         type='search'
                                                         name='searchInput'
@@ -376,7 +376,7 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                                         onChange={handleChange}
                                                         ref={inputRef}
                                                         placeholder={t("search.placeholder")}
-                                                        className='w-full rounded-2xl border border-transparent bg-payzone-navy/60 py-3 pr-12 pl-4 text-base text-payzone-white placeholder:text-payzone-white/60 focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo/60'
+                                                        className='w-full rounded-2xl border border-transparent bg-bilady-navy/60 py-3 pr-12 pl-4 text-base text-bilady-white placeholder:text-bilady-white/60 focus:border-bilady-gold focus:outline-none focus:ring-2 focus:ring-bilady-indigo/60'
                                                 />
                                                 {query && (
                                                         <button
@@ -393,7 +393,7 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                         <div className='flex flex-row items-center gap-2 self-end sm:self-auto'>
                                                 <button
                                                         type='submit'
-                                                        className='flex items-center gap-2 rounded-2xl bg-gradient-to-r from-payzone-gold to-payzone-indigo px-5 py-3 text-sm font-semibold text-payzone-white shadow-md transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-80'
+                                                        className='flex items-center gap-2 rounded-2xl bg-gradient-to-r from-bilady-gold to-bilady-indigo px-5 py-3 text-sm font-semibold text-bilady-white shadow-md transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-80'
                                                         disabled={searching}
                                                 >
                                                         {searching ? (
@@ -406,7 +406,7 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                                 <button
                                                         type='button'
                                                         onClick={handleToggleCategories}
-                                                        className='flex items-center gap-2 rounded-2xl border border-payzone-indigo/40 bg-payzone-navy/70 px-5 py-3 text-sm font-semibold text-payzone-gold transition hover:border-payzone-gold/60 hover:text-payzone-white'
+                                                        className='flex items-center gap-2 rounded-2xl border border-bilady-indigo/40 bg-bilady-navy/70 px-5 py-3 text-sm font-semibold text-bilady-gold transition hover:border-bilady-gold/60 hover:text-bilady-white'
                                                 >
                                                         <Grid3x3 className='h-5 w-5' />
                                                         <span>
@@ -420,10 +420,10 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                         </form>
 
                         {supportsOverlay && showResults && (
-                                <div className='rounded-3xl border border-white/10 bg-payzone-navy p-4 shadow-2xl'>
-                                        <div className='mb-3 flex items-center justify-between text-sm font-semibold text-payzone-gold'>
+                                <div className='rounded-3xl border border-white/10 bg-bilady-navy p-4 shadow-2xl'>
+                                        <div className='mb-3 flex items-center justify-between text-sm font-semibold text-bilady-gold'>
                                                 <span>{t("search.resultsTitle")}</span>
-                                                {searching && <Loader2 className='h-4 w-4 animate-spin text-payzone-indigo' />}
+                                                {searching && <Loader2 className='h-4 w-4 animate-spin text-bilady-indigo' />}
                                         </div>
 
                                         {!searching && error && (
@@ -433,7 +433,7 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                         )}
 
                                         {!searching && !error && results.length === 0 && query.trim() && (
-                                                <div className='rounded-2xl border border-white/5 bg-white/5 p-4 text-sm text-payzone-white/70'>
+                                                <div className='rounded-2xl border border-white/5 bg-white/5 p-4 text-sm text-bilady-white/70'>
                                                         {t("search.noResults", { query })}
                                                 </div>
                                         )}
@@ -449,9 +449,9 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                                                                 <button
                                                                                         type='button'
                                                                                         onClick={() => handleSelectProduct(product)}
-                                                                                        className='group flex w-full items-center gap-4 rounded-2xl border border-transparent bg-white/5 p-4 text-right transition hover:border-payzone-gold/50 hover:bg-white/10'
+                                                                                        className='group flex w-full items-center gap-4 rounded-2xl border border-transparent bg-white/5 p-4 text-right transition hover:border-bilady-gold/50 hover:bg-white/10'
                                                                                 >
-                                                                                        <div className='h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-payzone-indigo/30 bg-payzone-navy/50'>
+                                                                                        <div className='h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-bilady-indigo/30 bg-bilady-navy/50'>
                                                                                                 {image ? (
                                                                                                         <img
                                                                                                                 src={image}
@@ -459,31 +459,31 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                                                                                                 className='h-full w-full object-cover transition duration-300 group-hover:scale-105'
                                                                                                         />
                                                                                                 ) : (
-                                                                                                        <div className='flex h-full w-full items-center justify-center text-payzone-white/60'>
+                                                                                                        <div className='flex h-full w-full items-center justify-center text-bilady-white/60'>
                                                                                                                 <SearchIcon className='h-6 w-6' />
                                                                                                         </div>
                                                                                                 )}
                                                                                         </div>
                                                                                         <div className='flex flex-1 flex-col items-start gap-1 text-right'>
-                                                                                                <span className='text-base font-semibold text-payzone-white'>
+                                                                                                <span className='text-base font-semibold text-bilady-white'>
                                                                                                         {product.name}
                                                                                                 </span>
-                                                                                                <p className='line-clamp-2 text-sm text-payzone-white/60'>
+                                                                                                <p className='line-clamp-2 text-sm text-bilady-white/60'>
                                                                                                         {product.description}
                                                                                                 </p>
                                                                                         </div>
                                                                                         <div className='flex flex-col items-end gap-1'>
                                                                                                 {isDiscounted ? (
                                                                                                         <>
-                                                                                                                <span className='text-xs text-payzone-white/60 line-through'>
+                                                                                                                <span className='text-xs text-bilady-white/60 line-through'>
                                                                                                                         {formatMRU(price)}
                                                                                                                 </span>
-                                                                                                                <span className='text-sm font-semibold text-payzone-gold'>
+                                                                                                                <span className='text-sm font-semibold text-bilady-gold'>
                                                                                                                         {formatMRU(discountedPrice)}
                                                                                                                 </span>
                                                                                                         </>
                                                                                                 ) : (
-                                                                                                        <span className='text-sm font-semibold text-payzone-gold'>
+                                                                                                        <span className='text-sm font-semibold text-bilady-gold'>
                                                                                                                 {formatMRU(price)}
                                                                                                         </span>
                                                                                                 )}
@@ -498,16 +498,16 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                         )}
 
                         {showCategories && (
-                                <div className='rounded-3xl border border-white/10 bg-payzone-navy p-4 shadow-2xl'>
-                                        <div className='mb-3 flex items-center justify-between text-sm font-semibold text-payzone-gold'>
+                                <div className='rounded-3xl border border-white/10 bg-bilady-navy p-4 shadow-2xl'>
+                                        <div className='mb-3 flex items-center justify-between text-sm font-semibold text-bilady-gold'>
                                                 <span>{t("search.categoriesTitle")}</span>
                                                 {categoriesLoading && (
-                                                        <Loader2 className='h-4 w-4 animate-spin text-payzone-indigo' />
+                                                        <Loader2 className='h-4 w-4 animate-spin text-bilady-indigo' />
                                                 )}
                                         </div>
 
                                         {!categoriesLoading && categories.length === 0 && (
-                                                <div className='rounded-2xl border border-white/5 bg-white/5 p-4 text-sm text-payzone-white/70'>
+                                                <div className='rounded-2xl border border-white/5 bg-white/5 p-4 text-sm text-bilady-white/70'>
                                                         {t("search.categoriesEmpty")}
                                                 </div>
                                         )}
@@ -519,7 +519,7 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                                                         <button
                                                                                 type='button'
                                                                                 onClick={handleClearCategorySelection}
-                                                                                className='flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent bg-white/10 p-4 text-sm font-semibold text-payzone-gold transition hover:border-payzone-gold/60 hover:bg-white/20'
+                                                                                className='flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent bg-white/10 p-4 text-sm font-semibold text-bilady-gold transition hover:border-bilady-gold/60 hover:bg-white/20'
                                                                         >
                                                                                 <span>{t("search.clearCategory")}</span>
                                                                         </button>
@@ -530,7 +530,7 @@ const SearchBar = ({ variant = "global", categorySlug = null }) => {
                                                                         <button
                                                                                 type='button'
                                                                                 onClick={() => handleSelectCategory(category)}
-                                                                                className='flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent bg-white/5 p-4 text-sm font-semibold text-payzone-white transition hover:border-payzone-gold/50 hover:bg-white/10'
+                                                                                className='flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent bg-white/5 p-4 text-sm font-semibold text-bilady-white transition hover:border-bilady-gold/50 hover:bg-white/10'
                                                                         >
                                                                                 <span>{category.name}</span>
                                                                         </button>

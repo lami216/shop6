@@ -33,7 +33,7 @@ const ProductCard = ({ product }) => {
         };
 
         return (
-                <div className='group relative flex w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-bladi-green/40 via-payzone-navy/50 to-black/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-payzone-gold hover:shadow-2xl sm:aspect-[3/4] lg:aspect-square'>
+                <div className='group relative flex w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-bladi-green/40 via-bilady-navy/50 to-black/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-bilady-gold hover:shadow-2xl sm:aspect-[3/4] lg:aspect-square'>
                         <Link
                                 to={`/products/${product._id}`}
                                 className='relative aspect-[4/5] w-full overflow-hidden min-h-[14rem] sm:min-h-0 sm:aspect-square'
@@ -51,15 +51,15 @@ const ProductCard = ({ product }) => {
                                                 alt={product.name}
                                         />
                                 ) : (
-                                        <div className='flex h-full w-full items-center justify-center bg-payzone-navy/70 text-sm text-white/60'>
+                                        <div className='flex h-full w-full items-center justify-center bg-bilady-navy/70 text-sm text-white/60'>
                                                 {t("common.status.noImage")}
                                         </div>
                                 )}
-                                <div className='pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-payzone-navy/70 via-payzone-navy/20 to-transparent' />
+                                <div className='pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-bilady-navy/70 via-bilady-navy/20 to-transparent' />
                         </Link>
 
                         <div className='mt-4 flex flex-1 flex-col px-5 pb-5'>
-                                <Link to={`/products/${product._id}`} className='block transition-colors duration-300 hover:text-payzone-gold'>
+                                <Link to={`/products/${product._id}`} className='block transition-colors duration-300 hover:text-bilady-gold'>
                                         <h5 className='text-lg font-semibold tracking-tight text-white'>{product.name}</h5>
                                 </Link>
                                 <div className='mt-3 flex flex-wrap items-baseline gap-2'>
@@ -69,13 +69,13 @@ const ProductCard = ({ product }) => {
                                                         <span className='max-w-full break-words text-lg font-bold text-red-300'>{formatMRU(discountedPrice)}</span>
                                                 </>
                                         ) : (
-                                                <span className='max-w-full break-words text-lg font-semibold leading-tight text-payzone-gold'>
+                                                <span className='max-w-full break-words text-lg font-semibold leading-tight text-bilady-gold'>
                                                         {formatMRU(price)}
                                                 </span>
                                         )}
                                 </div>
                                 <button
-                                        className='mt-auto flex items-center justify-center gap-2 rounded-lg bg-payzone-gold px-5 py-2 text-sm font-medium text-payzone-navy transition-colors duration-300 hover:bg-bladi-yellow focus:outline-none focus:ring-4 focus:ring-payzone-indigo/40'
+                                        className='mt-auto flex items-center justify-center gap-2 rounded-lg bg-bilady-gold px-5 py-2 text-sm font-medium text-bilady-navy transition-colors duration-300 hover:bg-bladi-yellow focus:outline-none focus:ring-4 focus:ring-bilady-indigo/40'
                                         onClick={handleAddToCart}
                                 >
                                         <ShoppingCart size={20} />

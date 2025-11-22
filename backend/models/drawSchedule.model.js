@@ -6,6 +6,11 @@ const drawScheduleSchema = new mongoose.Schema(
                         type: Date,
                         required: true,
                 },
+                liveStreamUrl: {
+                        type: String,
+                        default: "",
+                        trim: true,
+                },
         },
         {
                 timestamps: true,

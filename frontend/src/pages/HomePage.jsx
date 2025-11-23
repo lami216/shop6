@@ -86,7 +86,7 @@ const HomePage = () => {
 
                         <section
                                 id='hero'
-                                className='relative overflow-hidden bg-gradient-to-l from-[#0f5f45]/85 via-[#134e3b]/70 to-[#0b3f2f]/90 px-4 pb-16 pt-10 shadow-inner shadow-black/30 sm:px-6 lg:px-8 lg:pt-14'
+                                className='relative overflow-hidden bg-gradient-to-l from-[#0f5f45]/85 via-[#134e3b]/70 to-[#0b3f2f]/90 px-4 pb-16 pt-28 shadow-inner shadow-black/30 sm:px-6 sm:pt-12 lg:px-8 lg:pt-14'
                         >
                                 <div className='absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_20%_20%,rgba(242,199,69,0.28),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(216,30,47,0.22),transparent_32%)]' />
                                 <div className='relative mx-auto max-w-6xl'>
@@ -169,23 +169,24 @@ const HomePage = () => {
                                                 return (
                                                         <div
                                                                 key={prize._id}
-                                                                className='group relative flex flex-col overflow-hidden rounded-2xl bg-white/85 text-bilady-navy shadow-xl shadow-black/15 ring-1 ring-bladi-green/15 transition hover:-translate-y-1 hover:shadow-2xl'
+                                                                className='group relative h-64 overflow-hidden rounded-2xl shadow-xl shadow-black/15 ring-1 ring-bladi-green/15 transition duration-300 hover:-translate-y-1 hover:shadow-2xl'
                                                         >
-                                                                <div className='relative h-56 w-full overflow-hidden bg-gradient-to-br from-[#0f5f45]/35 via-[#0b3f2f]/45 to-[#0f5f45]/35'>
+                                                                <div className='absolute inset-0 bg-gradient-to-br from-[#0f5f45]/35 via-[#0b3f2f]/45 to-[#0f5f45]/35'>
                                                                         {coverImage ? (
                                                                                 <img
                                                                                         src={coverImage}
                                                                                         alt={prize.name}
-                                                                                        className='h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105'
+                                                                                        className='h-full w-full object-cover opacity-95 transition duration-500 group-hover:scale-105'
                                                                                 />
                                                                         ) : (
-                                                                                <div className='flex h-full w-full items-center justify-center text-sm text-white'>صورة الجائزة</div>
+                                                                                <div className='flex h-full w-full items-center justify-center text-sm font-semibold text-white/80'>صورة الجائزة</div>
                                                                         )}
-                                                                        <div className='absolute inset-0 bg-gradient-to-t from-[#0f5f45]/50 via-white/10 to-transparent' />
                                                                 </div>
-                                                                <div className='flex flex-1 flex-col items-center gap-3 p-5 text-center'>
-                                                                        <h3 className='text-xl font-bold text-bilady-navy'>{prize.name}</h3>
-                                                                        <p className='text-sm text-bilady-navy/80'>بطاقة السحب المجانية قد تمنحك هذه الجائزة عند إعلان الفائزين.</p>
+                                                                <div className='absolute inset-0 bg-gradient-to-t from-black/65 via-black/30 to-transparent' />
+                                                                <div className='absolute inset-x-0 bottom-0'>
+                                                                        <div className='bg-gradient-to-t from-black/75 via-black/45 to-transparent px-5 py-4 backdrop-blur-[2px]'>
+                                                                                <h3 className='text-xl font-bold text-white drop-shadow-md'>{prize.name}</h3>
+                                                                        </div>
                                                                 </div>
                                                         </div>
                                                 );
@@ -303,17 +304,16 @@ const HomePage = () => {
                                                 {winners.map((winner) => (
                                                         <div
                                                                 key={winner._id}
-                                                                className='flex flex-col gap-2 rounded-2xl bg-white/75 p-4 text-bilady-navy shadow-lg shadow-black/15 ring-1 ring-bladi-green/15'
+                                                                className='flex flex-col gap-3 rounded-2xl bg-white/80 p-4 text-bilady-navy shadow-lg shadow-black/15 ring-1 ring-bladi-green/15'
                                                         >
-                                                                <div className='flex items-center justify-between'>
-                                                                        <div className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-bilady-gold to-bilady-indigo text-lg font-bold text-bilady-navy shadow-inner shadow-black/20'>
-                                                                                {winner.name?.charAt(0) || "ب"}
-                                                                        </div>
-                                                                        <span className='text-xs text-bilady-navy/70'>{winner.city}</span>
+                                                                <div className='space-y-1'>
+                                                                        <p className='text-lg font-extrabold text-bilady-navy'>{winner.name}</p>
+                                                                        <p className='text-sm font-medium text-bilady-navy/70'>{winner.city}</p>
                                                                 </div>
-                                                                <div>
-                                                                        <p className='text-sm text-bilady-navy/60'>الجائزة</p>
-                                                                        <p className='text-lg font-bold text-bilady-gold'>{winner.prizeName}</p>
+                                                                <div className='flex items-center justify-start'>
+                                                                        <span className='inline-flex items-center gap-2 rounded-full bg-bilady-gold/20 px-3 py-1 text-sm font-semibold text-bilady-navy shadow-inner shadow-bilady-gold/20'>
+                                                                                {winner.prizeName}
+                                                                        </span>
                                                                 </div>
                                                         </div>
                                                 ))}

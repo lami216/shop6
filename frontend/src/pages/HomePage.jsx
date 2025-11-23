@@ -320,7 +320,7 @@ const HomePage = () => {
                                                                         <p className='text-sm font-medium text-bilady-navy/70'>{winner.city}</p>
                                                                 </div>
                                                                 <div className='flex items-center justify-start'>
-                                                                        <span className='inline-flex items-center gap-2 rounded-full bg-bilady-gold/20 px-3 py-1 text-sm font-semibold text-bilady-navy shadow-inner shadow-bilady-gold/20'>
+                                                                        <span className='inline-flex items-center justify-center rounded-full bg-[#f9e7b3] px-4 py-2 text-sm font-bold text-bladi-green-soft shadow-inner shadow-bilady-gold/30'>
                                                                                 {winner.prizeName}
                                                                         </span>
                                                                 </div>

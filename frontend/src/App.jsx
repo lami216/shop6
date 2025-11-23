@@ -74,7 +74,7 @@ function App() {
                         <Toaster />
                         <Footer />
                         <a
-                                href='https://wa.me/22244455666'
+                                href='https://wa.me/22220615151'
                                 target='_blank'
                                 rel='noreferrer'
                                 className='fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-l from-bilady-gold to-bladi-yellow px-5 py-3 text-bilady-navy shadow-xl shadow-black/40 transition hover:scale-105 hover:shadow-2xl'

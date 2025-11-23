@@ -1,4 +1,4 @@
-import { PlusCircle, ShoppingBasket, CalendarClock, Gift, Trophy } from "lucide-react";
+import { PlusCircle, ShoppingBasket, CalendarClock, Gift, Trophy, Boxes } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import useTranslation from "../hooks/useTranslation";
@@ -9,6 +9,7 @@ import { useProductStore } from "../stores/useProductStore";
 import DrawScheduleForm from "../components/DrawScheduleForm";
 import PrizeManager from "../components/PrizeManager";
 import WinnersManager from "../components/WinnersManager";
+import BoxContentsManager from "../components/BoxContentsManager";
 
 const AdminPage = () => {
         const [activeTab, setActiveTab] = useState("create");
@@ -25,6 +26,7 @@ const AdminPage = () => {
                         { id: "products", label: t("admin.tabs.products"), icon: ShoppingBasket },
                         { id: "prizes", label: t("admin.tabs.prizes"), icon: Gift },
                         { id: "winners", label: t("admin.tabs.winners"), icon: Trophy },
+                        { id: "box-contents", label: t("admin.tabs.boxContents"), icon: Boxes },
                         { id: "draw", label: "موعد السحب", icon: CalendarClock },
                 ],
                 [t]
@@ -64,6 +66,7 @@ const AdminPage = () => {
                                 {activeTab === "products" && <ProductsList onEdit={() => setActiveTab("create")} />}
                                 {activeTab === "prizes" && <PrizeManager />}
                                 {activeTab === "winners" && <WinnersManager />}
+                                {activeTab === "box-contents" && <BoxContentsManager />}
                                 {activeTab === "draw" && <DrawScheduleForm />}
                         </div>
                 </div>

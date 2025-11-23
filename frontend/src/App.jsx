@@ -7,6 +7,7 @@ import AdminPage from "./pages/AdminPage";
 import CategoryPage from "./pages/CategoryPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import SearchPage from "./pages/SearchPage";
+import BoxContentsPage from "./pages/BoxContentsPage";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -63,6 +64,7 @@ function App() {
                                         <Route path='/category/:category' element={<CategoryPage />} />
                                         <Route path='/products/:id' element={<ProductDetailPage />} />
                                         <Route path='/search' element={<SearchPage />} />
+                                        <Route path='/box-contents' element={<BoxContentsPage />} />
                                         <Route path='/cart' element={<CartPage />} />
                                         <Route path='/checkout' element={<CheckoutPage />} />
                                         <Route path='/purchase-success' element={<PurchaseSuccessPage />} />

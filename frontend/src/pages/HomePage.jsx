@@ -148,6 +148,15 @@ const HomePage = () => {
                                 </div>
                         </section>
 
+                        <div className='relative -mt-6 mb-10 flex justify-center px-4 sm:px-6 lg:px-8'>
+                                <a
+                                        href='/box-contents'
+                                        className='inline-flex items-center justify-center rounded-full bg-bilady-gold px-8 py-3 text-lg font-bold text-bilady-navy shadow-lg shadow-bilady-gold/40 transition hover:scale-105 hover:bg-bladi-yellow'
+                                >
+                                        محتويات البوكس
+                                </a>
+                        </div>
+
                         <section id='prizes' className='relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8'>
                                 <div className='mb-10 flex flex-col gap-4 text-center'>
                                         <span className='mx-auto w-fit rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-bilady-gold shadow-inner shadow-black/20'>جوائز السحب</span>

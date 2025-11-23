@@ -25,6 +25,29 @@ export async function uploadImage(fileBase64OrBuffer, folder = "products") {
   return { url: res.url, fileId: res.fileId };
 }
 
+const resolveExtension = (fileBase64) => {
+  const match = typeof fileBase64 === "string" ? fileBase64.match(/^data:([^;]+);base64,/) : null;
+  if (!match) return "file";
+  const mime = match[1] || "";
+  const [, subtype = "file"] = mime.split("/");
+  return subtype.split("+")[0] || "file";
+};
+
+export async function uploadMediaAsset(fileBase64OrBuffer, folder = "uploads") {
+  if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
+    throw new Error("ImageKit env missing (IMAGEKIT_PUBLIC_KEY/PRIVATE_KEY/URL_ENDPOINT).");
+  }
+
+  const extension = resolveExtension(fileBase64OrBuffer);
+  const res = await imagekitClient.upload({
+    file: fileBase64OrBuffer,
+    fileName: `${Date.now()}.${extension}`,
+    folder,
+  });
+
+  return { url: res.url, fileId: res.fileId };
+}
+
 export async function deleteImage(fileId) {
   if (!fileId) return;
   if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {

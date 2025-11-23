@@ -65,7 +65,10 @@
                         "prizeDeleted": "تم حذف الجائزة",
                         "winnerCreated": "تم إضافة الفائز بنجاح",
                         "winnerUpdated": "تم تحديث بيانات الفائز",
-                        "winnerDeleted": "تم حذف الفائز"
+                        "winnerDeleted": "تم حذف الفائز",
+                        "boxContentCreated": "تم إضافة محتوى البوكس",
+                        "boxContentUpdated": "تم تحديث محتوى البوكس",
+                        "boxContentDeleted": "تم حذف محتوى البوكس"
                 }
         },
         "nav": {
@@ -178,6 +181,37 @@
                         }
                 }
         },
+        "boxContents": {
+                "manager": {
+                        "title": "محتويات البوكس",
+                        "description": "أضف أو عدّل الوسائط الخاصة بمحتويات بوكس بلادي لتظهر في صفحة مخصصة للعملاء.",
+                        "form": {
+                                "name": "اسم المحتوى",
+                                "media": "وسيلة العرض (صورة أو فيديو)",
+                                "chooseMedia": "اختيار صورة أو فيديو",
+                                "changeMedia": "تغيير الوسيلة",
+                                "mediaHint": "ارفع صورة أو فيديو قصير يوضح المحتوى.",
+                                "nameRequired": "يرجى إدخال اسم المحتوى.",
+                                "mediaRequired": "يرجى رفع صورة أو فيديو للمحتوى.",
+                                "submitCreate": "حفظ المحتوى",
+                                "submitUpdate": "تحديث المحتوى",
+                                "cancelEdit": "إلغاء التعديل"
+                        },
+                        "list": {
+                                "title": "المحتويات الحالية",
+                                "empty": "لا توجد محتويات مضافة بعد.",
+                                "labels": {
+                                        "image": "صورة",
+                                        "video": "فيديو"
+                                },
+                                "actions": {
+                                        "edit": "تعديل",
+                                        "delete": "حذف"
+                                }
+                        },
+                        "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا المحتوى؟"
+                }
+        },
         "admin": {
                 "dashboardTitle": "لوحة تحكم المشرف",
                 "tabs": {
@@ -187,7 +221,8 @@
                         "orders": "الطلبات",
                         "coupons": "الكوبونات",
                         "prizes": "الجوائز",
-                        "winners": "الفائزون"
+                        "winners": "الفائزون",
+                        "boxContents": "محتويات البوكس"
                 },
                 "coupons": {
                         "title": "إدارة الكوبونات",
@@ -556,6 +591,10 @@
                 "fetchWinnersError": "تعذر تحميل قائمة الفائزين",
                 "createWinnerError": "تعذر إضافة الفائز",
                 "updateWinnerError": "تعذر تحديث بيانات الفائز",
-                "deleteWinnerError": "تعذر حذف الفائز"
+                "deleteWinnerError": "تعذر حذف الفائز",
+                "createBoxContentError": "تعذر إنشاء محتوى البوكس",
+                "updateBoxContentError": "تعذر تحديث محتوى البوكس",
+                "deleteBoxContentError": "تعذر حذف محتوى البوكس",
+                "fetchBoxContentsError": "تعذر تحميل محتويات البوكس"
         }
 }

@@ -103,7 +103,7 @@ const HomePage = () => {
                                                         </p>
                                                         <div className='flex flex-wrap items-center gap-4'>
                                                                 <a
-                                                                        href='#box'
+                                                                        href='https://wa.me/22220615151?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%B4%D8%B1%D8%A7%D8%A1%20%D8%A8%D9%88%D9%83%D8%B3%20%D8%A8%D9%84%D8%A7%D8%AF%D9%8A'
                                                                         className='rounded-full bg-bilady-gold px-6 py-3 text-lg font-bold text-bilady-navy shadow-lg shadow-bilady-gold/40 transition hover:scale-105 hover:bg-bladi-yellow'
                                                                 >
                                                                         اشتر بوكس بلادي الآن

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { PackageOpen, VideoIcon, Image as ImageIcon } from "lucide-react";
 import { useBoxContentStore } from "../stores/useBoxContentStore";
 
-const WHATSAPP_NUMBER = "22244455666";
+const WHATSAPP_NUMBER = "22220615151";
 const WHATSAPP_MESSAGE = encodeURIComponent("السلام عليكم أود شراء بوكس بلادي");
 
 const renderCardMedia = (content) => {

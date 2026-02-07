@@ -7,6 +7,10 @@ import { useProductStore } from "../stores/useProductStore";
 import { formatMRU } from "../lib/formatMRU";
 
 const MAX_IMAGES = 3;
+const MAX_IMAGE_SIZE_MB = 10;
+const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+const IMAGE_MAX_DIMENSION = 1920;
+const IMAGE_QUALITY = 0.8;
 
 const createInitialFormState = () => ({
         name: "",
@@ -27,6 +31,79 @@ const readFileAsDataURL = (file) =>
                 reader.onerror = reject;
                 reader.readAsDataURL(file);
         });
+
+const readBlobAsDataURL = (blob) =>
+        new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+        });
+
+const loadImageFromFile = (file) =>
+        new Promise((resolve, reject) => {
+                const image = new Image();
+                const objectUrl = URL.createObjectURL(file);
+                image.onload = () => {
+                        URL.revokeObjectURL(objectUrl);
+                        resolve(image);
+                };
+                image.onerror = (error) => {
+                        URL.revokeObjectURL(objectUrl);
+                        reject(error);
+                };
+                image.src = objectUrl;
+        });
+
+const compressImageFile = async (file) => {
+        if (!file.type.startsWith("image/")) {
+                const error = new Error("Invalid image file");
+                error.code = "INVALID_IMAGE";
+                throw error;
+        }
+
+        const image = await loadImageFromFile(file);
+        const maxDimension = Math.max(image.width, image.height);
+        const scale =
+                maxDimension > IMAGE_MAX_DIMENSION ? IMAGE_MAX_DIMENSION / maxDimension : 1;
+        const targetWidth = Math.round(image.width * scale);
+        const targetHeight = Math.round(image.height * scale);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+                const error = new Error("Unable to process image");
+                error.code = "CANVAS_ERROR";
+                throw error;
+        }
+
+        context.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+        const blob = await new Promise((resolve, reject) => {
+                canvas.toBlob(
+                        (result) => {
+                                if (result) {
+                                        resolve(result);
+                                } else {
+                                        reject(new Error("Failed to compress image"));
+                                }
+                        },
+                        "image/jpeg",
+                        IMAGE_QUALITY
+                );
+        });
+
+        if (blob.size > MAX_IMAGE_SIZE_BYTES) {
+                const error = new Error("Image too large");
+                error.code = "IMAGE_TOO_LARGE";
+                throw error;
+        }
+
+        return readBlobAsDataURL(blob);
+};
 
 const validateProductFormFields = (state, totalImages, t) => {
         const trimmedName = state.name.trim();
@@ -141,7 +218,31 @@ const CreateProductForm = () => {
                 if (!files.length) return;
 
                 try {
-                        const base64Images = await Promise.all(files.map(readFileAsDataURL));
+                        const base64Images = (
+                                await Promise.all(
+                                        files.map(async (file) => {
+                                                try {
+                                                        return await compressImageFile(file);
+                                                } catch (error) {
+                                                        if (error?.code === "IMAGE_TOO_LARGE") {
+                                                                toast.error(
+                                                                        t("admin.createProduct.messages.imageSizeLimit", {
+                                                                                size: MAX_IMAGE_SIZE_MB,
+                                                                        })
+                                                                );
+                                                        } else {
+                                                                toast.error(t("admin.createProduct.messages.imagesUploadError"));
+                                                        }
+                                                        return null;
+                                                }
+                                        })
+                                )
+                        ).filter(Boolean);
+
+                        if (!base64Images.length) {
+                                return;
+                        }
+
                         setFormState((previous) => {
                                 const remainingSlots =
                                         MAX_IMAGES - (previous.existingImages.length + previous.newImages.length);
